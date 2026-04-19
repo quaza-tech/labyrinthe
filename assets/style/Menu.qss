@@ -1,0 +1,50 @@
+QLabel {
+        color: #e0ca82; /* Couleur or vieilli */
+        font-family: 'Palatino Linotype', 'Georgia', serif;
+        font-size: 70px;
+        font-weight: bold;
+        letter-spacing: 5px;
+        /* Ombre pour simuler la profondeur sur la brique */
+        qproperty-alignment: 'AlignCenter';
+    }
+
+QPushButton {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                                stop:0 #4e342e, stop:1 #261b18); /* Dégradé bois sombre */
+    color: #d7ccc8;
+    font-family: 'Georgia', serif;
+    font-size: 24px;
+    font-weight: bold;
+    
+    border: 3px solid #1a1a1a; /* Bordure fer forgé */
+    border-radius: 8px;
+    
+    /* C'est ici qu'on agrandit la taille */
+    min-width: 250px;
+    min-height: 60px;
+    margin-bottom: 10px;
+}
+
+QPushButton:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                                stop:0 #5d4037, stop:1 #3e2723);
+    border: 3px solid #e0ca82; /* Lueur dorée au survol */
+    color: #ffffff;
+}
+
+QPushButton:pressed {
+    background: #1b110f;
+    padding-top: 5px; /* Effet enfoncé */
+    padding-left: 5px;
+}
+#start:disabled {
+    background: #2a2a3d;
+    color: #6a6a88;
+}
+#Menu { 
+    background-image: url('assets/img/Menu/scene.jpg'); 
+    /*border-image étire l'image sur toute la surface sans répétition */
+    border-image: url('assets/img/Menu/scene.jpg') 0 0 40 0 stretch stretch;
+        
+    /*On ajoute une couleur de fond noire qui servira de base pour assombrir */
+    background-color: black;}

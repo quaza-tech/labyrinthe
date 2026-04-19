@@ -1,0 +1,70 @@
+#Login { 
+    background-image: url('assets/img/Menu/rempart.jpg');
+    background-color: black;
+    border-image: url('assets/img/Menu/rempart.jpg') 0 0 0 0 stretch stretch;
+}
+
+/* Titre CONNEXION - Plus petit et plus haut */
+QLabel {
+    color: #e0ca82;
+    font-family: 'Palatino Linotype', 'Georgia', serif;
+    font-size: 32px; /* Réduit de 50px à 32px */
+    font-weight: bold;
+    letter-spacing: 5px;
+    qproperty-alignment: 'AlignCenter';
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+/* Label d'erreur */
+#labERR {
+    color: #ff4444;
+    font-size: 16px;
+    font-weight: normal;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 5px;
+    padding: 5px;
+}
+
+QLineEdit {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                                stop:0 #4e342e, stop:1 #261b18);
+    color: #d7ccc8;
+    font-family: 'Georgia', serif;
+    font-size: 18px; /* Un peu plus petit pour le réalisme */
+    font-weight: bold;
+    border: 2px solid #1a1a1a;
+    border-radius: 5px;
+    padding-left: 10px;
+    min-height: 45px; /* Hauteur ajustée */
+    margin-bottom: 5px;
+}
+
+QLineEdit:focus {
+    border: 2px solid #e0ca82;
+}
+
+QPushButton {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                                stop:0 #4e342e, stop:1 #261b18);
+    color: #d7ccc8;
+    font-family: 'Georgia', serif;
+    font-size: 16px;
+    font-weight: bold;
+    border: 2px solid #1a1a1a;
+    border-radius: 5px;
+    min-height: 40px;
+}
+
+QPushButton:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+                                stop:0 #5d4037, stop:1 #3e2723);
+    border: 2px solid #e0ca82;
+    color: #ffffff;
+}
+
+QPushButton:pressed {
+    background: #1b110f;
+    padding-top: 3px;
+    padding-left: 3px;
+}

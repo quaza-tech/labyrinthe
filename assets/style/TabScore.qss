@@ -1,0 +1,74 @@
+/* Fond général */
+QWidget {
+    background-color: #0f0f0f;
+    color: #e0e0e0;
+    font-family: "Georgia", serif;
+    border-radius: 10px;
+}
+
+/* Titre */
+QLabel {
+    color: #2ecc71; /* vert victoire */
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+QTableWidget {
+    alternate-background-color: rgba(50, 35, 20, 180);
+}
+
+/* TABLEAU */
+QTableWidget {
+    background-color: rgba(30, 20, 10, 180); /* brun sombre transparent */
+    border: 2px solid #c8a96a; /* doré */
+    border-radius: 10px;
+    gridline-color: #3a2a1a;
+    font-size: 16px;
+}
+
+/* En-têtes colonnes */
+QHeaderView::section {
+    background-color: #3a2a1a;
+    color: #f5deb3; /* beige/doré clair */
+    padding: 6px;
+    border: 1px solid #c8a96a;
+    font-weight: bold;
+}
+
+/* Cellules */
+QTableWidget::item {
+    padding: 6px;
+}
+
+/* Hover ligne */
+QTableWidget::item:hover {
+    background-color: rgba(46, 204, 113, 80); /* vert léger */
+}
+
+/* Ligne sélectionnée */
+QTableWidget::item:selected {
+    background-color: #2ecc71;
+    color: black;
+}
+
+/* Scrollbar stylée */
+QScrollBar:vertical {
+    background: #1a1a1a;
+    width: 10px;
+    margin: 2px;
+}
+
+QScrollBar::handle:vertical {
+    background: #c8a96a;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #e0c080;
+}
+
+/* Coins du tableau */
+QTableCornerButton::section {
+    background-color: #3a2a1a;
+    border: 1px solid #c8a96a;
+}
