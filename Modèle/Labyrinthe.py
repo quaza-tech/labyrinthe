@@ -46,9 +46,9 @@ class labyrinthe:
     def add_ouverture(self):
         for elt in self.labyrinthe.keys():
             case_non_voisine : list = self.murs_cassable(elt)
-            if case_non_voisine != []:
+            if len(case_non_voisine)>=2:
                 casse = random.randint(0,100)
-                if casse < 15:
+                if casse < 10:
                     choix_murs = random.randint(0,len(case_non_voisine)-1)
                     match case_non_voisine[choix_murs]:
                         case "Nord":
