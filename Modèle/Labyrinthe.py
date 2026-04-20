@@ -166,7 +166,7 @@ class labyrinthe:
                         liste_direction.append("Nord")
                     case 1:
                         liste_direction.append("Sud")
-            elif self.can_moove(observateur,(observateur[0]+dx,observateur[1])) and self.can_moove((observateur[0]+dx,observateur[1]),cible):
+            if self.can_moove(observateur,(observateur[0]+dx,observateur[1])) and self.can_moove((observateur[0]+dx,observateur[1]),cible):
                 vision += 0.5
                 match dx : 
                     case -1:
@@ -178,8 +178,43 @@ class labyrinthe:
                         liste_direction.append("Ouest")
                     case 1 :
                         liste_direction.append("Est")
+        if (abs(dx) == 2 and abs(dy) == 1) or (abs(dx) == 1 and abs(dy) == 2):
+            # deux can_moove à enchaîner
+            if abs(dx) ==2:
+                case_intermédiaire_v1 :tuple = (observateur[0]+dx//2,observateur[1])
+                case_intermédiaire_v2 : tuple = (observateur[0]+dx,observateur[1])
+            elif abs(dy) == 2:
+                case_intermédiaire_v1 :tuple = (observateur[0],observateur[1]+dy//2)
+                case_intermédiaire_v2 : tuple = (observateur[0],observateur[1]+dy)
                 
-        
+            if case_intermédiaire_v2 in self.labyrinthe.keys() and case_intermédiaire_v1 in self.labyrinthe.keys():
+                if self.can_moove(observateur,case_intermédiaire_v1) and self.can_moove(case_intermédiaire_v1,case_intermédiaire_v2) and self.can_moove(case_intermédiaire_v2,cible):
+                    vision += 0.33
+                    if abs(dx) == 2:
+                        match dx : 
+                            case -2:
+                                liste_direction.append("Nord")
+                            case 2:
+                                liste_direction.append("Sud")
+                        match dy:
+                            case 1:
+                                liste_direction.append("Est")
+                            case -1:
+                                liste_direction.append("Ouest")
+                    elif abs(dy) == 2:
+                        match dy:
+                            case 2:
+                                liste_direction.append("Est")
+                            case -2:
+                                liste_direction.append("Ouest")
+                        match dx : 
+                            case -1:
+                                liste_direction.append("Nord")
+                            case 1:
+                                liste_direction.append("Sud")
+                
+                        
+            
         return (vision,liste_direction)
     def get_cases_visibles(self, observateur: tuple,dist : int) -> dict:
         dico_see : dict = {observateur : (1,[])}

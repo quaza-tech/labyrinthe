@@ -60,6 +60,8 @@ class Vue(QWidget):
         """FOV EN TRIANGLE"""
         self.dico_direction = {('Sud','Est') : ((0,0),(0,self.size_case),(self.size_case,self.size_case)),('Est','Sud') : ((0,0),(self.size_case,0),(self.size_case,self.size_case)),('Est','Nord') : ((self.size_case,0),(0,0),(0,self.size_case)),('Nord','Est') : ((self.size_case,0),(self.size_case,self.size_case),(0,self.size_case)),('Nord','Ouest') : ((self.size_case,self.size_case),(self.size_case,0),(0,0)),('Ouest','Nord') : ((self.size_case,self.size_case),(0,self.size_case),(0,0)),('Ouest','Sud') : ((0,self.size_case),(self.size_case,self.size_case),(self.size_case,0)),('Sud','Ouest') : ((self.size_case,0),(0,0),(0,self.size_case))}
         
+        self.dico_direction_range = {('Sud','Est') : ((0,0),(0,self.size_case),(self.size_case,self.size_case),(self.size_case,self.size_case//2)),('Est','Sud') : ((0,0),(self.size_case,0),(self.size_case,self.size_case),(self.size_case//2,self.size_case)),('Est','Nord') : ((self.size_case,0),(0,0),(0,self.size_case),(self.size_case//2,self.size_case)),('Nord','Est') : ((self.size_case,0),(self.size_case,self.size_case),(0,self.size_case),(0,self.size_case//2)),('Nord','Ouest') : ((self.size_case,self.size_case),(self.size_case,0),(0,0),(0,self.size_case//2)),('Ouest','Nord') : ((self.size_case,self.size_case),(0,self.size_case),(0,0),(self.size_case//2,0)),('Ouest','Sud') : ((0,self.size_case),(self.size_case,self.size_case),(self.size_case,0),(self.size_case//2,0)),('Sud','Ouest') : ((0,self.size_case),(0,0),(self.size_case,0),(self.size_case,self.size_case//2))}
+        
         """((self.marge_cote + x * self.size_case, self.marge + y * self.size_case),(self.marge_cote + x * self.size_case, self.marge + y * self.size_case+self.size_case),(self.marge_cote + x * self.size_case + self.size_case, self.marge + y * self.size_case + self.size_case))"""
     
         
@@ -141,6 +143,7 @@ class Vue(QWidget):
                         painter.drawPixmap(QPoint(self.offset_x + y * self.size_case+self.size_case,self.offset_y + x * self.size_case),self.texture_mur_v)
                         """painter.drawLine(self.marge_cote + x * self.size_case,self.marge + y * self.size_case+self.size_case,self.marge_cote + x * self.size_case+self.size_case,self.marge + y *self.size_case + self.size_case)"""
         for elt in self.labyrinthe.labyrinthe.keys():
+            
             if elt not in self.cases_visibles:
                 painter.fillRect(self.marge_cote + elt[1] * self.size_case,self.marge + elt[0] * self.size_case,self.size_case,self.size_case,QColor(0, 0, 0, 255))  # opaque pour non visible)
         
@@ -153,6 +156,23 @@ class Vue(QWidget):
                     QPoint(base_x + points[0][1], base_y + points[0][0]),
                     QPoint(base_x + points[1][1], base_y + points[1][0]),
                     QPoint(base_x + points[2][1], base_y + points[2][0])
+                ])
+
+                painter.setBrush(QColor(0, 0, 0, 255))
+                painter.setPen(Qt.PenStyle.NoPen)  # pas de contour
+                painter.drawPolygon(polygone)
+                
+            elif float(self.cases_visibles[elt][0]) == 0.33:
+                points = self.dico_direction_range[tuple(self.cases_visibles[elt][1])]
+                print(points,elt,(self.cases_visibles[elt][1]))
+                base_x = self.marge_cote + elt[1] * self.size_case
+                base_y = self.marge + elt[0] * self.size_case
+                
+                polygone = QPolygon([
+                    QPoint(base_x + points[0][1], base_y + points[0][0]),
+                    QPoint(base_x + points[1][1], base_y + points[1][0]),
+                    QPoint(base_x + points[2][1], base_y + points[2][0]),
+                    QPoint(base_x + points[3][1], base_y + points[3][0])
                 ])
 
                 painter.setBrush(QColor(0, 0, 0, 255))
