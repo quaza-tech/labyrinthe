@@ -164,7 +164,6 @@ class Vue(QWidget):
                 
             elif float(self.cases_visibles[elt][0]) == 0.33:
                 points = self.dico_direction_range[tuple(self.cases_visibles[elt][1])]
-                print(points,elt,(self.cases_visibles[elt][1]))
                 base_x = self.marge_cote + elt[1] * self.size_case
                 base_y = self.marge + elt[0] * self.size_case
                 
