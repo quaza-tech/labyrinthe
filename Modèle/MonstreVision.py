@@ -1,4 +1,4 @@
-from Controleur.Monstre import Monstre
+from Modèle.Monstre import Monstre
 
 class MonstreVision(Monstre): 
     def __init__(self,start : tuple,img : str):

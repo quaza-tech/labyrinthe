@@ -1,5 +1,5 @@
-from PyQt6.QtWidgets import QApplication,QWidget,QLabel,QVBoxLayout,QPushButton,QTableWidget,QTableWidgetItem,QLineEdit,QHBoxLayout
-from PyQt6.QtCore import pyqtSignal,Qt
+from PyQt6.QtWidgets import QApplication,QWidget,QLabel,QVBoxLayout,QPushButton,QLineEdit,QHBoxLayout
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtGui import QGuiApplication
 import sys
 

@@ -1,6 +1,5 @@
-from PyQt6.QtWidgets import QApplication,QLabel,QWidget,QStackedWidget,QVBoxLayout,QPushButton
-from PyQt6.QtCore import QSize,Qt
-from PyQt6.QtGui import QGuiApplication,QPainter, QPen, QColor, QBrush
+from PyQt6.QtWidgets import QLabel,QWidget,QVBoxLayout,QPushButton
+from PyQt6.QtCore import Qt
 
 class Menu(QWidget):
     def __init__(self):

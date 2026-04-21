@@ -1,21 +1,18 @@
-from PyQt6.QtWidgets import QApplication,QLabel,QWidget,QStackedWidget,QVBoxLayout,QPushButton
-from PyQt6.QtCore import QSize,Qt
-from PyQt6.QtGui import QGuiApplication,QPainter, QPen, QColor, QBrush
-from Controleur.Joueur import Joueur
+from PyQt6.QtWidgets import QWidget,QStackedWidget,QVBoxLayout,QPushButton
+from PyQt6.QtGui import QGuiApplication
+from Modèle.Joueur import Joueur
 from Controleur.Jeu import Jeu
 from Modèle.Labyrinthe import labyrinthe
 from Vue.Vue import Vue
 from Controleur.Parametre import Parametre
-from Controleur.MonstreSonore import MonstreSonore
-from Controleur.MonstreVision import MonstreVision
+from Modèle.MonstreSonore import MonstreSonore
+from Modèle.MonstreVision import MonstreVision
 from Controleur.Scène.Menu import Menu
-from Modèle.ScoreManager import SQLite
 from Controleur.Scène.Login import login
 from Modèle.BDD.Repositorie.JoueurRepo import JoueurRepo
 from Modèle.BDD.Repositorie.ScoreRepo import ScoreRepo
 from Modèle.BDD.Repositorie.ToucheRepo import ToucheRepo
-import sys
-import time
+
 
 class SceneManager:
     def __init__(self,dimension : tuple):

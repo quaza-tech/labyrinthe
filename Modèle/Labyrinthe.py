@@ -258,7 +258,6 @@ class labyrinthe:
                         if (elt[0]+dx,elt[1]+dy) in dico_see.keys():
                             if dico_see[(elt[0]+dx,elt[1]+dy)][0] == 0.5 and dico_see[(elt[0]+dx,elt[1]+dy)][1][0] == dico_see[elt][1][0] and self.can_moove((elt[0]+dx,elt[1]+dy),elt):
                                 dico_see[elt] = (1.0,dico_see[elt][1])
-        print(dico_see)
         return dico_see
         
     ''' METHODE DE BFS POUR LES MONSTRES '''
@@ -286,6 +285,7 @@ class labyrinthe:
             coord : tuple = dico[liste_chemin[-1]]
             liste_chemin.append(coord)
         return liste_chemin[::-1]
+    
     def deplacement_aléatoire_monstre(self,coord : tuple)->list:
         chemin : list = []
         coord_actuel : tuple = coord

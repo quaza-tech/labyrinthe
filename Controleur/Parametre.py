@@ -1,13 +1,7 @@
-from PyQt6.QtWidgets import QApplication,QLabel,QWidget,QStackedWidget,QVBoxLayout,QPushButton,QSlider,QCheckBox,QTabWidget,QLineEdit
-from PyQt6.QtCore import QSize,Qt
-from PyQt6.QtGui import QGuiApplication,QPainter, QPen, QColor, QBrush
-from Controleur.Joueur import Joueur
-from Controleur.Jeu import Jeu
-from Modèle.Labyrinthe import labyrinthe
+from PyQt6.QtWidgets import QLabel,QWidget,QVBoxLayout,QSlider,QCheckBox,QTabWidget
+from PyQt6.QtCore import Qt
 from Controleur.CurrentKey import KeyBinder
-from Vue.Vue import Vue
 from PyQt6.QtCore import pyqtSignal
-import sys
 
 class Parametre(QTabWidget):
     

@@ -1,6 +1,5 @@
 from PyQt6.QtWidgets import QLineEdit
 from PyQt6.QtCore import Qt,pyqtSignal
-from Controleur.Joueur import Joueur
 
 
 class KeyBinder(QLineEdit):

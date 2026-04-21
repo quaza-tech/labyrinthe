@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QApplication,QWidget,QLabel,QVBoxLayout,QPushButton,QTableWidget,QTableWidgetItem,QHeaderView,QHBoxLayout,QAbstractItemView
+from PyQt6.QtWidgets import QWidget,QLabel,QVBoxLayout,QPushButton,QTableWidget,QTableWidgetItem,QHeaderView,QHBoxLayout
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtCore import Qt
 from Modèle.BDD.Repositorie.ScoreRepo import ScoreRepo

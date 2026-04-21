@@ -1,12 +1,9 @@
-from PyQt6.QtWidgets import QApplication,QWidget,QLabel,QVBoxLayout
-from PyQt6.QtCore import QSize,Qt,QTimer,QPoint
-from PyQt6.QtGui import QGuiApplication,QPainter, QPen, QColor, QBrush,QPixmap,QTransform,QPolygon
-from Modèle.Labyrinthe import labyrinthe
-import random
-from Controleur.Joueur import Joueur
+from PyQt6.QtWidgets import QWidget,QLabel
+from PyQt6.QtCore import Qt,QTimer,QPoint
+from PyQt6.QtGui import QGuiApplication,QPainter, QColor,QPixmap,QTransform,QPolygon
 from Controleur.Scène.Victoire import Victoire
 from Controleur.Scène.TabScore import TabScore
-import sys
+
 
 
 

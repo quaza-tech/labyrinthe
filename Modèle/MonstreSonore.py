@@ -1,4 +1,4 @@
-from Controleur.Monstre import Monstre
+from Modèle.Monstre import Monstre
 import math
 
 class MonstreSonore(Monstre): 

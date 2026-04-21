@@ -1,13 +1,11 @@
-
-from PyQt6.QtWidgets import QApplication,QWidget,QMessageBox
-from PyQt6.QtCore import QSize,Qt,QTimer,pyqtSignal,QObject
-from PyQt6.QtGui import QGuiApplication,QPainter, QPen, QColor, QBrush
-from Modèle.Labyrinthe import labyrinthe
-from Controleur.Joueur import Joueur
+from PyQt6.QtMultimedia import QSoundEffect
+from PyQt6.QtCore import Qt,QTimer,pyqtSignal,QObject,QUrl
+from Modèle.Joueur import Joueur
+from Modèle import MonstreSonore
 from Vue.Vue import Vue
-from Controleur import MonstreSonore,MonstreVision
+from Modèle import MonstreVision
 from Modèle.BDD.Repositorie.ScoreRepo import ScoreRepo
-import sys,time,random
+import time,random
 
 
 
@@ -30,6 +28,12 @@ class Jeu(QObject):
         self.on_defaite = on_defaite
         self.score = score
         self.mode = mode
+        
+        """SONS DES DIFFERENTS MOBS (PAS, CRI)"""
+        
+        self.sound_pas = QSoundEffect()
+        self.sound_pas.setSource(QUrl.fromLocalFile("assets/son/pas_beton.wav"))
+        self.sound_pas.setVolume(0.2)
         
         """SIGNAUX"""
         
@@ -67,38 +71,42 @@ class Jeu(QObject):
             coord_joueur = self.joueur.get_coord()
             coord_direction = (coord_joueur[0]-1,coord_joueur[1])
             if self.vue.labyrinthe.can_moove(coord_joueur,coord_direction):
-                if (time.time()-self.dernier_deplacement) >0.25:
+                if (time.time()-self.dernier_deplacement) >0.28:
                         self.dernier_deplacement = time.time()
                         self.vue.cases_visibles = self.vue.labyrinthe.get_cases_visibles(coord_direction,3)
                         self.joueur.set_coord(coord_direction)
+                        self.sound_pas.play()
                 
         elif touche == self.joueur.get_commande("reculer") or touche == Qt.Key.Key_Down:
             coord_joueur = self.joueur.get_coord()
             coord_direction = (coord_joueur[0]+1,coord_joueur[1])
             if self.vue.labyrinthe.can_moove(coord_joueur,coord_direction):
-                if (time.time()-self.dernier_deplacement) >0.25:
+                if (time.time()-self.dernier_deplacement) >0.28:
                         self.dernier_deplacement = time.time()
                         self.vue.cases_visibles = self.vue.labyrinthe.get_cases_visibles(coord_direction,3)
                         self.joueur.set_coord(coord_direction)
+                        self.sound_pas.play()
                 
         elif touche == self.joueur.get_commande("droite") or touche == Qt.Key.Key_Right :
             coord_joueur = self.joueur.get_coord()
             coord_direction = (coord_joueur[0],coord_joueur[1]+1)
             if self.vue.labyrinthe.can_moove(coord_joueur,coord_direction):
-                if (time.time()-self.dernier_deplacement) >0.25:
+                if (time.time()-self.dernier_deplacement) >0.28:
                         self.dernier_deplacement = time.time()
                         self.vue.cases_visibles = self.vue.labyrinthe.get_cases_visibles(coord_direction,3)
                         self.joueur.set_coord(coord_direction)
+                        self.sound_pas.play()
                 
         elif touche == self.joueur.get_commande("gauche") or touche == Qt.Key.Key_Left:
             coord_joueur = self.joueur.get_coord()
             coord_direction = (coord_joueur[0],coord_joueur[1]-1)
             if self.vue.labyrinthe.can_moove(coord_joueur,coord_direction):
-                if (time.time()-self.dernier_deplacement) >0.25:
+                if (time.time()-self.dernier_deplacement) >0.28:
                         self.dernier_deplacement = time.time()
                         self.vue.cases_visibles = self.vue.labyrinthe.get_cases_visibles(coord_direction,3)
                         self.joueur.set_coord(coord_direction)
-
+                        self.sound_pas.play()
+        
         if self.condition_victoire(self.vue.temps_restant):
             return
         self.vue.update()
