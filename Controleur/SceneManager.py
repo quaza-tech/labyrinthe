@@ -7,8 +7,8 @@ from Vue.Vue import Vue
 from Controleur.Parametre import Parametre
 from Modèle.MonstreSonore import MonstreSonore
 from Modèle.MonstreVision import MonstreVision
-from Controleur.Scène.Menu import Menu
-from Controleur.Scène.Login import login
+from Vue.Scène.Menu import Menu
+from Vue.Scène.Login import login
 from Modèle.BDD.Repositorie.JoueurRepo import JoueurRepo
 from Modèle.BDD.Repositorie.ScoreRepo import ScoreRepo
 from Modèle.BDD.Repositorie.ToucheRepo import ToucheRepo

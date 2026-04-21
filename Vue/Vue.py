@@ -1,8 +1,8 @@
 from PyQt6.QtWidgets import QWidget,QLabel
 from PyQt6.QtCore import Qt,QTimer,QPoint
 from PyQt6.QtGui import QGuiApplication,QPainter, QColor,QPixmap,QTransform,QPolygon
-from Controleur.Scène.Victoire import Victoire
-from Controleur.Scène.TabScore import TabScore
+from Vue.Scène.Victoire import Victoire
+from Vue.Scène.TabScore import TabScore
 
 
 
