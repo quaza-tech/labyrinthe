@@ -183,9 +183,11 @@ class labyrinthe:
             if abs(dx) ==2:
                 case_intermédiaire_v1 :tuple = (observateur[0]+dx//2,observateur[1])
                 case_intermédiaire_v2 : tuple = (observateur[0]+dx,observateur[1])
+                case_intermédiaire_v3 : tuple = (observateur[0]+dx//2,observateur[1]+dy)
             elif abs(dy) == 2:
                 case_intermédiaire_v1 :tuple = (observateur[0],observateur[1]+dy//2)
                 case_intermédiaire_v2 : tuple = (observateur[0],observateur[1]+dy)
+                case_intermédiaire_v3 : tuple = (observateur[0]+dx,observateur[1]+dy//2)
                 
             if case_intermédiaire_v2 in self.labyrinthe.keys() and case_intermédiaire_v1 in self.labyrinthe.keys():
                 if self.can_moove(observateur,case_intermédiaire_v1) and self.can_moove(case_intermédiaire_v1,case_intermédiaire_v2) and self.can_moove(case_intermédiaire_v2,cible):
@@ -212,10 +214,34 @@ class labyrinthe:
                                 liste_direction.append("Nord")
                             case 1:
                                 liste_direction.append("Sud")
-                
-                        
-            
+                elif case_intermédiaire_v3 in self.labyrinthe.keys():
+                    if self.can_moove(observateur,case_intermédiaire_v1) and self.can_moove(case_intermédiaire_v1,case_intermédiaire_v3) and self.can_moove(case_intermédiaire_v3,cible):
+                        vision += 0.5
+                        if abs(dx) == 2:
+                            match dx : 
+                                case -2:
+                                    liste_direction.append("Sud")
+                                case 2:
+                                    liste_direction.append("Nord")
+                            match dy:
+                                case 1:
+                                    liste_direction.append("Ouest")
+                                case -1:
+                                    liste_direction.append("Est")
+                        elif abs(dy) == 2:
+                            match dy:
+                                case 2:
+                                    liste_direction.append("Ouest")
+                                case -2:
+                                    liste_direction.append("Est")
+                            match dx : 
+                                case -1:
+                                    liste_direction.append("Sud")
+                                case 1:
+                                    liste_direction.append("Nord")
+                    
         return (vision,liste_direction)
+    
     def get_cases_visibles(self, observateur: tuple,dist : int) -> dict:
         dico_see : dict = {observateur : (1,[])}
         for x in range(observateur[0]-dist,observateur[0]+dist):
