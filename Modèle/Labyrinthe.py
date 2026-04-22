@@ -191,7 +191,7 @@ class labyrinthe:
                 
             if case_intermédiaire_v2 in self.labyrinthe.keys() and case_intermédiaire_v1 in self.labyrinthe.keys():
                 if self.can_moove(observateur,case_intermédiaire_v1) and self.can_moove(case_intermédiaire_v1,case_intermédiaire_v2) and self.can_moove(case_intermédiaire_v2,cible):
-                    vision += 0.33
+                    vision = 0.33
                     if abs(dx) == 2:
                         match dx : 
                             case -2:
@@ -216,7 +216,7 @@ class labyrinthe:
                                 liste_direction.append("Sud")
                 elif case_intermédiaire_v3 in self.labyrinthe.keys():
                     if self.can_moove(observateur,case_intermédiaire_v1) and self.can_moove(case_intermédiaire_v1,case_intermédiaire_v3) and self.can_moove(case_intermédiaire_v3,cible):
-                        vision += 0.5
+                        vision = 0.5
                         if abs(dx) == 2:
                             match dx : 
                                 case -2:
@@ -253,8 +253,8 @@ class labyrinthe:
                         dico_see[case_test] = test_vision
         for elt in dico_see.keys():
             if dico_see[elt][0] == 0.33:
-                for dx in range(-1,1):
-                    for dy in range(-1,1):
+                for dx in range(-1,2):
+                    for dy in range(-1,2):
                         if (elt[0]+dx,elt[1]+dy) in dico_see.keys():
                             if dico_see[(elt[0]+dx,elt[1]+dy)][0] == 0.5 and dico_see[(elt[0]+dx,elt[1]+dy)][1][0] == dico_see[elt][1][0] and self.can_moove((elt[0]+dx,elt[1]+dy),elt):
                                 dico_see[elt] = (1.0,dico_see[elt][1])
