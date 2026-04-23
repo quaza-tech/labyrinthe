@@ -6,6 +6,7 @@ from Vue.Vue import Vue
 from Modèle import MonstreVision
 from Modèle.BDD.Repositorie.ScoreRepo import ScoreRepo
 import time,random
+from PyQt6.QtGui import QKeySequence
 
 
 
@@ -14,7 +15,7 @@ class Jeu(QObject):
     victoire = pyqtSignal()
     defaite = pyqtSignal()
     
-    def __init__(self,vue : Vue,joueur : Joueur,MonstreVisuel : MonstreVision,MonstreSon : MonstreSonore,on_defaite,score: ScoreRepo,mode : str):
+    def __init__(self,vue : Vue,joueur : Joueur,MonstreVisuel : MonstreVision,MonstreSon : MonstreSonore,on_defaite,score: ScoreRepo,mode : str, Sound):
         super().__init__()
         self.vue : Vue = vue
         self.joueur : Joueur = joueur
@@ -31,9 +32,7 @@ class Jeu(QObject):
         
         """SONS DES DIFFERENTS MOBS (PAS, CRI)"""
         
-        self.sound_pas = QSoundEffect()
-        self.sound_pas.setSource(QUrl.fromLocalFile("assets/son/pas_beton.wav"))
-        self.sound_pas.setVolume(0.2)
+        self.son = Sound
         
         """SIGNAUX"""
         
@@ -63,50 +62,57 @@ class Jeu(QObject):
             self.on_defaite()
         return False
     def deplacer_joueur(self,touche):
-            
-        fleche = [Qt.Key.Key_Up,Qt.Key.Key_Down,Qt.Key.Key_Right,Qt.Key.Key_Left]
-        if touche not in fleche:
-            touche = chr(touche)
-        if touche == self.joueur.get_commande("avancer") or touche == Qt.Key.Key_Up:
+        
+        touche = QKeySequence(touche).toString()
+        if self.joueur.get_commande("accroupi") == touche:
+            if self.joueur.is_accroupi():
+                self.joueur.set_accroupi(False)
+            else:
+                self.joueur.set_accroupi(True)
+                
+        timelaps = 2 if self.joueur.is_accroupi() else 0.1
+        
+        if touche == self.joueur.get_commande("avancer") or touche == "Up":
             coord_joueur = self.joueur.get_coord()
             coord_direction = (coord_joueur[0]-1,coord_joueur[1])
             if self.vue.labyrinthe.can_moove(coord_joueur,coord_direction):
-                if (time.time()-self.dernier_deplacement) >0.28:
+                if (time.time()-self.dernier_deplacement) > timelaps:
                         self.dernier_deplacement = time.time()
                         self.vue.cases_visibles = self.vue.labyrinthe.get_cases_visibles(coord_direction,3)
                         self.joueur.set_coord(coord_direction)
-                        self.sound_pas.play()
+                        self.son.play("step","effets")
                 
         elif touche == self.joueur.get_commande("reculer") or touche == Qt.Key.Key_Down:
             coord_joueur = self.joueur.get_coord()
             coord_direction = (coord_joueur[0]+1,coord_joueur[1])
             if self.vue.labyrinthe.can_moove(coord_joueur,coord_direction):
-                if (time.time()-self.dernier_deplacement) >0.28:
+                if (time.time()-self.dernier_deplacement) > timelaps:
                         self.dernier_deplacement = time.time()
                         self.vue.cases_visibles = self.vue.labyrinthe.get_cases_visibles(coord_direction,3)
                         self.joueur.set_coord(coord_direction)
-                        self.sound_pas.play()
+                        self.son.play("step","effets")
                 
         elif touche == self.joueur.get_commande("droite") or touche == Qt.Key.Key_Right :
             coord_joueur = self.joueur.get_coord()
             coord_direction = (coord_joueur[0],coord_joueur[1]+1)
             if self.vue.labyrinthe.can_moove(coord_joueur,coord_direction):
-                if (time.time()-self.dernier_deplacement) >0.28:
+                if (time.time()-self.dernier_deplacement) > timelaps:
                         self.dernier_deplacement = time.time()
                         self.vue.cases_visibles = self.vue.labyrinthe.get_cases_visibles(coord_direction,3)
                         self.joueur.set_coord(coord_direction)
-                        self.sound_pas.play()
+                        self.son.play("step","effets")
                 
         elif touche == self.joueur.get_commande("gauche") or touche == Qt.Key.Key_Left:
             coord_joueur = self.joueur.get_coord()
             coord_direction = (coord_joueur[0],coord_joueur[1]-1)
             if self.vue.labyrinthe.can_moove(coord_joueur,coord_direction):
-                if (time.time()-self.dernier_deplacement) >0.28:
+                
+                if (time.time()-self.dernier_deplacement) > timelaps:
                         self.dernier_deplacement = time.time()
                         self.vue.cases_visibles = self.vue.labyrinthe.get_cases_visibles(coord_direction,3)
                         self.joueur.set_coord(coord_direction)
-                        self.sound_pas.play()
-        
+                        self.son.play("step","effets")
+                        
         if self.condition_victoire(self.vue.temps_restant):
             return
         self.vue.update()
@@ -117,7 +123,7 @@ class Jeu(QObject):
         
     def deplacement_monstre_sonore(self):
         """Deplacement monstre sonore"""
-        if self.monstre_sonore.bruit_entendu(self.joueur.get_coord()):
+        if self.monstre_sonore.bruit_entendu(self.joueur.get_coord(),self.joueur.is_accroupi()):
             self.monstre_sonore.set_etat("Alerte")
             self.timer_deplacement.stop()
             self.timer_deplacement.start(250)

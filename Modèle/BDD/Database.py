@@ -12,5 +12,7 @@ class DB():
         self.cur.execute("CREATE TABLE IF NOT EXISTS joueur(id_j INTEGER PRIMARY KEY AUTOINCREMENT ,pseudo TEXT,email TEXT,mdp TEXT)")
         self.cur.execute("CREATE TABLE IF NOT EXISTS Score(id INTEGER PRIMARY KEY AUTOINCREMENT,pseudo TEXT,temps INTEGER ,difficulté TEXT,score INTEGER)")
         self.cur.execute("CREATE TABLE IF NOT EXISTS Touche(id INTEGER PRIMARY KEY AUTOINCREMENT,libelle TEXT,touche_assigne CHAR,pseudo TEXT)")
+        self.cur.execute("CREATE TABLE IF NOT EXISTS Audio(id INTEGER PRIMARY KEY AUTOINCREMENT,libelle TEXT,volume INTEGER,pseudo TEXT)")
+        
     def endSession(self):
         self.con.close()

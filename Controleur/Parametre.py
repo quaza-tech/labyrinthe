@@ -6,6 +6,12 @@ from PyQt6.QtCore import pyqtSignal
 class Parametre(QTabWidget):
     
     touche_assign = pyqtSignal(tuple)
+    son_generale = pyqtSignal(int)
+    son_effet = pyqtSignal(tuple)
+    son_musique = pyqtSignal(tuple)
+    son_ui = pyqtSignal(tuple)
+    aide_vis = pyqtSignal()
+    
     
     def __init__(self,joueur):
         
@@ -32,15 +38,42 @@ class Parametre(QTabWidget):
     def setup_audio_tab(self):
         layout = QVBoxLayout()
         
-        layout.addWidget(QLabel("Volume des bruitages (Pas, Cris) :"))
-        self.sfx_slider = QSlider(Qt.Orientation.Horizontal)
-        self.sfx_slider.setRange(0, 100)
-        self.sfx_slider.setValue(80)
-        layout.addWidget(self.sfx_slider)
+        layout.addWidget(QLabel("Volume générale (Pas, Cris) :"))
+        self.gene_vol = QSlider(Qt.Orientation.Horizontal)
+        self.gene_vol.setRange(0, 100)
+        self.gene_vol.setValue(100)
+        layout.addWidget(self.gene_vol)
         
-        layout.addWidget(QCheckBox("Aide visuelle pour l'aveugle"))
+        layout.addWidget(QLabel("Volume de la Musique :"))
+        self.mus_vol = QSlider(Qt.Orientation.Horizontal)
+        self.mus_vol.setRange(0, 100)
+        self.mus_vol.setValue(100)
+        layout.addWidget(self.mus_vol)
+        
+        layout.addWidget(QLabel("Volume des effets sonore:"))
+        self.eff_vol = QSlider(Qt.Orientation.Horizontal)
+        self.eff_vol.setRange(0, 100)
+        self.eff_vol.setValue(100)
+        layout.addWidget(self.eff_vol)
+        
+        layout.addWidget(QLabel("Volume de l'interface (bouton) :"))
+        self.ui_vol = QSlider(Qt.Orientation.Horizontal)
+        self.ui_vol.setRange(0, 100)
+        self.ui_vol.setValue(100)
+        layout.addWidget(self.ui_vol)
+        
+        self.aide_visu = QCheckBox("Aide visuelle")
+        layout.addWidget(self.aide_visu)
         layout.addStretch() # Pousse tout vers le haut
         self.tab_audio.setLayout(layout)
+        
+        """SIGNAUX"""
+        self.gene_vol.valueChanged.connect(self.son_generale.emit)
+        self.mus_vol.valueChanged.connect(lambda t: self.son_musique.emit(("musique", t)))
+        self.eff_vol.valueChanged.connect(lambda t: self.son_effet.emit(("effet",t)))
+        self.ui_vol.valueChanged.connect(lambda t: self.son_ui.emit(("ui",t)))
+        self.aide_visu.checkStateChanged.connect(self.aide_vis.emit)
+        
     def setup_commande_tab(self):
         layout = QVBoxLayout()
         
@@ -60,6 +93,10 @@ class Parametre(QTabWidget):
         self.key_left = KeyBinder(self.joueur.get_commande("gauche"),lambda t: self.joueur.set_commande("gauche", t)) # On crée le binder avec la touche par défaut
         layout.addWidget(self.key_left)
         
+        layout.addWidget(QLabel("S'accroupir : "))
+        self.shift = KeyBinder(self.joueur.get_commande("accroupi"),lambda t: self.joueur.set_commande("accroupi", t)) # On crée le binder avec la touche par défaut
+        layout.addWidget(self.shift)
+        
         self.tab_commandes.setLayout(layout)
         
         """SIGNAUX"""
@@ -68,6 +105,7 @@ class Parametre(QTabWidget):
         self.key_down.new_touche.connect(lambda t: self.touche_assign.emit(("reculer", t)))
         self.key_left.new_touche.connect(lambda t: self.touche_assign.emit(("gauche", t)))
         self.key_right.new_touche.connect(lambda t: self.touche_assign.emit(("droite", t)))
+        self.shift.new_touche.connect(lambda t: self.touche_assign.emit(("accroupi", t)))
         
     def apply_medieval_style(self):
         self.setStyleSheet("""

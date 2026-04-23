@@ -12,6 +12,8 @@ from Vue.Scène.Login import login
 from Modèle.BDD.Repositorie.JoueurRepo import JoueurRepo
 from Modèle.BDD.Repositorie.ScoreRepo import ScoreRepo
 from Modèle.BDD.Repositorie.ToucheRepo import ToucheRepo
+from Modèle.BDD.Repositorie.AudioRepo import audioRepo
+from Services.SoundManager import SoundManager
 
 
 class SceneManager:
@@ -32,14 +34,16 @@ class SceneManager:
         """INSTANCIATION DES LOGIQUES DE VUE BDD ET JEU"""
         self.login = login()
         self.joueurRepo,self.ScoreRepo = JoueurRepo(),ScoreRepo() ; self.ToucheRepo = ToucheRepo()
+        self.soundManager = SoundManager()
         self.vue = Vue(self.labyrinthe,self.joueur)
-        self.jeu = Jeu(self.vue,self.joueur,self.monstre_vision,self.monstre_sonore,self.retour_menu,self.ScoreRepo,None)
+        self.jeu = Jeu(self.vue,self.joueur,self.monstre_vision,self.monstre_sonore,self.retour_menu,self.ScoreRepo,None,self.soundManager)
         self.vue.jeu = self.jeu
         self.vue.setup_signaux()
         
         
         self.stack = QStackedWidget()
         self.menu = Menu()
+        self.parametres = Parametre(self.joueur)
             
         
         
@@ -50,6 +54,14 @@ class SceneManager:
         self.menu.button_leave.clicked.connect(self.leave)
         self.login.envoie_donnee.connect(self.verifier_login)
         
+        """Signaux en lien avec le son """
+        self.parametres.son_generale.connect(self.soundManager.set_volume)
+        self.parametres.son_generale.connect(self.soundManager.set_volume)
+        self.parametres.son_generale.connect(self.soundManager.set_volume)
+        self.parametres.son_generale.connect(self.soundManager.set_volume)
+        self.parametres.son_generale.connect(self.soundManager.set_volume)
+        
+        
         self.stack.addWidget(self.login)
         self.stack.addWidget(self.menu)
         self.stack.addWidget(self.vue)
@@ -57,7 +69,7 @@ class SceneManager:
         layoutparent = QVBoxLayout()
         self.button_retour = QPushButton("RETOUR")
         layoutparent.addWidget(self.button_retour)
-        self.parametres = Parametre(self.joueur)
+        
         layoutparent.addWidget(self.parametres)
         Widgetparent.setLayout(layoutparent)
         self.stack.addWidget(Widgetparent)
@@ -109,7 +121,8 @@ class SceneManager:
         if pseudo =="":
             reponse = self.joueurRepo.getByEmailAndPassword(email,mdp)
         else :
-            reponse = self.joueurRepo.create(email,mdp,pseudo)
+            self.joueurRepo.create(email,mdp,pseudo)
+            reponse = self.joueurRepo.getByEmailAndPassword(email,mdp)
         if reponse[0] != True:
             self.login.messageERR(reponse[1])
         else:

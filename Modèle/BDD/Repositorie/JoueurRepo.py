@@ -9,25 +9,25 @@ class JoueurRepo(Joueur):
         self.db = DB("Echo_du_silence.db")
         
     def getById(self,id_joueur)-> tuple:
-        self.db.cur.execute("SELECT * FROM joueur WHERE id =  ?",(id_joueur))
+        self.db.cur.execute("SELECT email,pseudo FROM joueur WHERE id =  ?",(id_joueur))
         data = self.db.cur.fetchall()
         if data:
             return (True,data)
         return (False,"ERR 404 : not found")
     def getByEmail(self,email) -> tuple:
-        self.db.cur.execute("SELECT * FROM joueur WHERE email =  ?",(email))
+        self.db.cur.execute("SELECT email,pseudo FROM joueur WHERE email =  ?",(email))
         data = self.db.cur.fetchall()
         if data:
             return (True,data)
         return (False,"ERR 404 : not found")
     def getByEmailAndPassword(self,email,mdp) -> tuple:
-        self.db.cur.execute("SELECT * FROM joueur WHERE email =  ? and mdp = ?",(email,hashlib.sha256(mdp.encode()).hexdigest()))
+        self.db.cur.execute("SELECT email,pseudo FROM joueur WHERE email =  ? and mdp = ?",(email,hashlib.sha256(mdp.encode()).hexdigest()))
         data = self.db.cur.fetchall()
         if data:
             return (True,data)
         return (False,"ERR 404 : not found")
     def existByEmailOrName (self,email,pseudo) ->tuple:
-        self.db.cur.execute("SELECT * FROM joueur WHERE email =  ? or pseudo = ?",(email,pseudo))
+        self.db.cur.execute("SELECT email,pseudo FROM joueur WHERE email =  ? or pseudo = ?",(email,pseudo))
         data = self.db.cur.fetchall()
         if data:
             return (True,data)

@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QLineEdit
 from PyQt6.QtCore import Qt,pyqtSignal
+from PyQt6.QtGui import QKeySequence
 
 
 class KeyBinder(QLineEdit):
@@ -8,7 +9,7 @@ class KeyBinder(QLineEdit):
     
     def __init__(self, current_key, on_change,parent=None):
         super().__init__(parent)
-        self.setText(current_key)
+        self.setText(str(current_key))
         self.on_change=on_change
         self.setReadOnly(True) # On ne veut pas qu'il tape au clavier normalement
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -33,7 +34,7 @@ class KeyBinder(QLineEdit):
         key = event.key()
         
         # On transforme le code de la touche en texte (ex: Qt.Key_Z -> "Z")
-        key_text = event.text().upper()
+        key_text = QKeySequence(event.key()).toString()
         
         # Gestion des touches spéciales (Espace, Echap, etc.)
         if key == Qt.Key.Key_Space:

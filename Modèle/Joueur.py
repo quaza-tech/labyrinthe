@@ -7,6 +7,8 @@ class Joueur:
         self.reculer =  "S"
         self.gauche = "Q"
         self.droite = "D"
+        self.accroupi = 16
+        self.est_accroupi = False
         self.pseudo : str = pseudo
         
     def get_coord(self)-> tuple:
@@ -30,9 +32,14 @@ class Joueur:
                 return self.gauche
             case "droite":
                 return self.droite
+            case "accroupi":
+                return self.accroupi
     
     def get_nom(self) ->str:
         return self.pseudo
+    
+    def is_accroupi(self) -> bool:
+        return self.est_accroupi
     
     def set_nom(self,nom : str):
         self.pseudo = nom
@@ -47,9 +54,15 @@ class Joueur:
                 self.gauche = new
             case "droite":
                 self.droite = new
+            case "accroupi":
+                self.accroupi = new
     
     def set_coord(self,coord : tuple ):
         self.coord = coord
     
+    def set_accroupi(self,etat : bool):
+        self.est_accroupi = etat
+        
     def reset(self):
+        self.est_accroupi = False
         self.coord = self.start
