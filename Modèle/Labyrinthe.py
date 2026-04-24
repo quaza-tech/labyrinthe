@@ -273,7 +273,7 @@ class labyrinthe:
             liste_case : list = self.labyrinthe[case_actuelle].direction_dispo()
             for elt in liste_case:
                 enfant : tuple = (case_actuelle[0]+directions[elt][0],case_actuelle[1]+directions[elt][1])
-                if enfant not in dico.keys():
+                if enfant not in dico:
                     dico[enfant] = case_actuelle
                     if enfant[0] == coord_joueur[0] and enfant[1] == coord_joueur[1]:
                         trouve = True

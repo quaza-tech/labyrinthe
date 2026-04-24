@@ -30,9 +30,13 @@ class Jeu(QObject):
         self.score = score
         self.mode = mode
         
+        
+        """Lien avec le joueur"""
+        self.liste_touche : dict = {self.joueur.get_commande("avancer") : (-1,0),self.joueur.get_commande("reculer") : (1,0),self.joueur.get_commande("droite") : (0,1) ,self.joueur.get_commande("gauche") :(0,-1)}
         """SONS DES DIFFERENTS MOBS (PAS, CRI)"""
         
         self.son = Sound
+        self.liste_bruit : list = []
         
         """SIGNAUX"""
         
@@ -70,48 +74,17 @@ class Jeu(QObject):
             else:
                 self.joueur.set_accroupi(True)
                 
-        timelaps = 2 if self.joueur.is_accroupi() else 0.1
+        timelaps = 0.7 if self.joueur.is_accroupi() else 0.25
         
-        if touche == self.joueur.get_commande("avancer") or touche == "Up":
-            coord_joueur = self.joueur.get_coord()
-            coord_direction = (coord_joueur[0]-1,coord_joueur[1])
-            if self.vue.labyrinthe.can_moove(coord_joueur,coord_direction):
+        if touche in self.liste_touche:
+            coord_direction = (self.joueur.get_x()+self.liste_touche[touche][0],self.joueur.get_y()+self.liste_touche[touche][1])
+            if self.vue.labyrinthe.can_moove(self.joueur.get_coord(),coord_direction):
                 if (time.time()-self.dernier_deplacement) > timelaps:
-                        self.dernier_deplacement = time.time()
-                        self.vue.cases_visibles = self.vue.labyrinthe.get_cases_visibles(coord_direction,3)
-                        self.joueur.set_coord(coord_direction)
-                        self.son.play("step","effets")
-                
-        elif touche == self.joueur.get_commande("reculer") or touche == Qt.Key.Key_Down:
-            coord_joueur = self.joueur.get_coord()
-            coord_direction = (coord_joueur[0]+1,coord_joueur[1])
-            if self.vue.labyrinthe.can_moove(coord_joueur,coord_direction):
-                if (time.time()-self.dernier_deplacement) > timelaps:
-                        self.dernier_deplacement = time.time()
-                        self.vue.cases_visibles = self.vue.labyrinthe.get_cases_visibles(coord_direction,3)
-                        self.joueur.set_coord(coord_direction)
-                        self.son.play("step","effets")
-                
-        elif touche == self.joueur.get_commande("droite") or touche == Qt.Key.Key_Right :
-            coord_joueur = self.joueur.get_coord()
-            coord_direction = (coord_joueur[0],coord_joueur[1]+1)
-            if self.vue.labyrinthe.can_moove(coord_joueur,coord_direction):
-                if (time.time()-self.dernier_deplacement) > timelaps:
-                        self.dernier_deplacement = time.time()
-                        self.vue.cases_visibles = self.vue.labyrinthe.get_cases_visibles(coord_direction,3)
-                        self.joueur.set_coord(coord_direction)
-                        self.son.play("step","effets")
-                
-        elif touche == self.joueur.get_commande("gauche") or touche == Qt.Key.Key_Left:
-            coord_joueur = self.joueur.get_coord()
-            coord_direction = (coord_joueur[0],coord_joueur[1]-1)
-            if self.vue.labyrinthe.can_moove(coord_joueur,coord_direction):
-                
-                if (time.time()-self.dernier_deplacement) > timelaps:
-                        self.dernier_deplacement = time.time()
-                        self.vue.cases_visibles = self.vue.labyrinthe.get_cases_visibles(coord_direction,3)
-                        self.joueur.set_coord(coord_direction)
-                        self.son.play("step","effets")
+                    self.dernier_deplacement = time.time()
+                    self.vue.cases_visibles = self.vue.labyrinthe.get_cases_visibles(coord_direction,3)
+                    self.joueur.set_coord(coord_direction)
+                    self.son.play("step","effets")
+                    self.liste_bruit.append((coord_direction,0.5 if self.joueur.is_accroupi() else 1 ,time.time()))
                         
         if self.condition_victoire(self.vue.temps_restant):
             return
@@ -121,13 +94,35 @@ class Jeu(QObject):
         self.timer_deplacement.start(1000)
         self.timer_deplacement_vision.start(1000)
         
+    def bruit_pertinence(self):
+        for elt in self.liste_bruit:
+            if (time.time()-elt[2]) > 3:
+                self.liste_bruit.remove(elt)
+        pertinence = 0
+        element_pertinent : int = None
+        for elt in self.liste_bruit:
+            
+            x = len(self.vue.labyrinthe.bfs_monstre(self.monstre_sonore.get_coord(),elt[0]))
+            y = elt[1]
+            f = y / (1+2*x)
+            if f > pertinence:
+                pertinence = f
+                element_pertinent = (x,elt[0],pertinence)
+        
+        return element_pertinent
+                
     def deplacement_monstre_sonore(self):
         """Deplacement monstre sonore"""
-        if self.monstre_sonore.bruit_entendu(self.joueur.get_coord(),self.joueur.is_accroupi()):
-            self.monstre_sonore.set_etat("Alerte")
-            self.timer_deplacement.stop()
-            self.timer_deplacement.start(250)
-            self.monstre_sonore.set_coord_visible(self.joueur.get_coord())
+        
+        if self.liste_bruit != []:
+            bruit = self.bruit_pertinence()
+            if bruit:
+                print(bruit)
+                if self.monstre_sonore.bruit_entendu(bruit[2]):
+                    self.monstre_sonore.set_etat("Alerte")
+                    self.timer_deplacement.stop()
+                    self.timer_deplacement.start(250)
+                    self.monstre_sonore.set_coord_visible(bruit[1])
             
         else :
             if not self.monstre_sonore.get_deplacement():
