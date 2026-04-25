@@ -12,12 +12,10 @@ class SoundManager:
     def _load_sounds(self):
         
         
-        self.sounds["effets"] = [("step",son("pas_beton",0.5))]
+        self.sounds["effets"] = [("step",son("pas_beton",0.2))]
     
     def play(self, name,categorie):
-        
-        for i in range (0,len(self.sounds[categorie])-1):
-            print(self.sounds[categorie][i][0])
+        for i in range (0,len(self.sounds[categorie])):
             if self.sounds[categorie][i][0] == name:
                 self.sounds[categorie][i][1].son.play()
                     
@@ -25,7 +23,8 @@ class SoundManager:
         self.volume = volume
         
         for sound in self.sounds.values():
-            sound[1].setVolumeByPourcentage(volume/100)
+            for elt in sound:
+                elt[1].setVolumeByPourcentage(volume/100)
     
     def set_volume_to(self,info : tuple):
         

@@ -1,0 +1,31 @@
+QWidget{
+    background-color: rgba(0,0,0,150);
+    border: 2px solid gray;
+    border-radius: 6px;
+}
+
+QHBoxLayout {
+    width : 64px;
+    height : 64px;
+    border-radius : 5px;
+}
+deselection{
+    border-radius : 5px;
+    border-color : rgb(128,128,32);
+    
+    background-color : rgba(0,0,0, 128);
+}
+#nbr {
+    color: white;
+    font-size: 12px;
+    border : none;
+    background-color : rgba(0,0,0, 0);
+}
+
+#selection {
+    border-radius : 5px;
+    border-color : rgb(255, 255, 255);
+    background-color : rgba(0,0,0, 128);
+}
+
+

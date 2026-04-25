@@ -117,7 +117,6 @@ class Jeu(QObject):
         if self.liste_bruit != []:
             bruit = self.bruit_pertinence()
             if bruit:
-                print(bruit)
                 if self.monstre_sonore.bruit_entendu(bruit[2]):
                     self.monstre_sonore.set_etat("Alerte")
                     self.timer_deplacement.stop()

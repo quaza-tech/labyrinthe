@@ -80,15 +80,3 @@ class login(QWidget):
         self.labERR.setText(message)
         self.labERR.show()
         
-        
-if __name__ == "__main__":
-
-    print(' --- main --- ')
-    
-    # création d'une QApplication
-    app = QApplication(sys.argv)
-    # creation d'un widget
-    log = login()
-    # lancement de l'application
-    sys.exit(app.exec()) 
-        

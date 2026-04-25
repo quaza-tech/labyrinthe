@@ -38,7 +38,6 @@ class Vue(QWidget):
         self.offset_x = int((self.new_width - laby_largeur-self.marge*1) // 2)
         self.offset_y = int((self.new_height - laby_hauteur-self.marge*0.05) // 2)
         self.heigth_murs = int(self.size_case*1.6)
-        self.texture_sol = [QPixmap("assets/img/labyrinthe/rempart1.png"),QPixmap("assets/img/labyrinthe/rempart2.png"),QPixmap("assets/img/labyrinthe/rempart3.png"),QPixmap("assets/img/labyrinthe/rempart4.png")]
         self.texture_murs = QPixmap("assets/img/labyrinthe/rempart.png").scaled(self.size_murs,self.size_case,Qt.AspectRatioMode.IgnoreAspectRatio)
         self.texture_sol = QPixmap("assets/img/labyrinthe/sol_sombre.jpg").scaled(self.size_case,self.size_case,Qt.AspectRatioMode.IgnoreAspectRatio)
         self.texture_mur_h = QPixmap("assets/img/labyrinthe/rempartsombre.png").scaled(self.heigth_murs, self.size_murs)  # fin et large → pour Ouest/Est
