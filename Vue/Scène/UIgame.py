@@ -5,8 +5,8 @@ from Vue.Composants.carreInventaire import Slot
 from Vue.Composants.Barre import barre
 
 class UIinGame(QWidget):
-    def __init__(self,dico : dict):
-        super().__init__()
+    def __init__(self,dico : dict,parent = None):
+        super().__init__(parent)
         
         self.resize(800,500)
         self.grid = QGridLayout() ; self.layoutInventaire = QHBoxLayout() ; self.layoutEtatJoueur = QHBoxLayout()
@@ -41,7 +41,6 @@ class UIinGame(QWidget):
         self.grid.addWidget(self.progLaby,0,2,1,2)
         self.grid.addLayout(self.layoutInventaire,3,0,1,2,Qt.AlignmentFlag.AlignBottom) ; self.grid.addLayout(self.layoutEtatJoueur,3,4,1,1,Qt.AlignmentFlag.AlignBottom)
         
-        self.slots[2].selection()
         self.show()
         
     def StaminaIsVisible(self) -> bool:
@@ -84,6 +83,10 @@ class UIinGame(QWidget):
             elif self.slots[i].getItem()[0] == "":
                 self.slots[i].updateNbrItem(item,valeurs)
                 return
+    def selection(self,num_slots):
+        for elt in self.slots:
+            elt.deselection()
+        self.slots[num_slots].selection()
         
     
     

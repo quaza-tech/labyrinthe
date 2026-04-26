@@ -97,6 +97,22 @@ class Parametre(QTabWidget):
         self.shift = KeyBinder(self.joueur.get_commande("accroupi"),lambda t: self.joueur.set_commande("accroupi", t)) # On crée le binder avec la touche par défaut
         layout.addWidget(self.shift)
         
+        layout.addWidget(QLabel("Slot 1  : "))
+        self.slots1 = KeyBinder(self.joueur.get_commande(0),lambda t: self.joueur.set_commande('0', t)) # On crée le binder avec la touche par défaut
+        layout.addWidget(self.slots1)
+        
+        layout.addWidget(QLabel("Slot 2 : "))
+        self.slots2 = KeyBinder(self.joueur.get_commande(1),lambda t: self.joueur.set_commande('1', t)) # On crée le binder avec la touche par défaut
+        layout.addWidget(self.slots2)
+        
+        layout.addWidget(QLabel("Slot 3 : "))
+        self.slots3 = KeyBinder(self.joueur.get_commande(2),lambda t: self.joueur.set_commande('2', t)) # On crée le binder avec la touche par défaut
+        layout.addWidget(self.slots3)
+        
+        layout.addWidget(QLabel("Slot 4 : "))
+        self.slots4 = KeyBinder(self.joueur.get_commande(3),lambda t: self.joueur.set_commande('3', t)) # On crée le binder avec la touche par défaut
+        layout.addWidget(self.slots4)
+        
         self.tab_commandes.setLayout(layout)
         
         """SIGNAUX"""
@@ -106,6 +122,10 @@ class Parametre(QTabWidget):
         self.key_left.new_touche.connect(lambda t: self.touche_assign.emit(("gauche", t)))
         self.key_right.new_touche.connect(lambda t: self.touche_assign.emit(("droite", t)))
         self.shift.new_touche.connect(lambda t: self.touche_assign.emit(("accroupi", t)))
+        self.slots1.new_touche.connect(lambda t: self.touche_assign.emit((0, t)))
+        self.slots2.new_touche.connect(lambda t: self.touche_assign.emit((1, t)))
+        self.slots3.new_touche.connect(lambda t: self.touche_assign.emit((2, t)))
+        self.slots4.new_touche.connect(lambda t: self.touche_assign.emit((3, t)))
         
     def apply_medieval_style(self):
         self.setStyleSheet("""

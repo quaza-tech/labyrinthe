@@ -3,6 +3,7 @@ from PyQt6.QtCore import Qt,QTimer,QPoint
 from PyQt6.QtGui import QGuiApplication,QPainter, QColor,QPixmap,QTransform,QPolygon
 from Vue.Scène.Victoire import Victoire
 from Vue.Scène.TabScore import TabScore
+from Vue.Scène.UIgame import UIinGame
 
 
 
@@ -26,6 +27,8 @@ class Vue(QWidget):
         self.labyrinthe = labyrinthe
         self.joueur = Joueur
         self.jeu = None
+        self.UIingame = UIinGame(self.joueur.inventaire,self)
+        self.UIingame.setGeometry(0,0,self.new_width, self.new_height)
         
         """ATTRIBUT POUR LE LABY"""
         self.size_case = (self.new_height-50)//(self.labyrinthe.get("dimension")[0]+1)
@@ -46,6 +49,7 @@ class Vue(QWidget):
         murs.end()
         transform = QTransform().rotate(90)
         self.texture_mur_v = self.texture_mur_h.transformed(transform)
+        
         
         """CAMERA"""
         

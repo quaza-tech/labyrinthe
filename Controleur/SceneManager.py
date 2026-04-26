@@ -114,10 +114,13 @@ class SceneManager:
     def setup_touche(self,pseudo):
         reponse = self.ToucheRepo.getToucheBypseudo(pseudo)
         if reponse[0] != False:
+            print("setup en cours")
             for elt in reponse[1]:
+                print(elt)
                 self.joueur.set_commande(elt[0],elt[1])
         
     def verifier_login(self, email, mdp,pseudo):
+        
         if pseudo =="":
             reponse = self.joueurRepo.getByEmailAndPassword(email,mdp)
         else :
@@ -129,6 +132,7 @@ class SceneManager:
             self.menu.setPseudo(reponse[1][0][1])
             self.joueur.set_nom(reponse[1][0][1])
             self.setup_touche(reponse[1][0][1])
+            self.jeu.update_touche()
             self.parametres.setup_commande_tab()
             
             self.stack.setCurrentIndex(1)
@@ -137,6 +141,7 @@ class SceneManager:
     
     def sauvegarder_touche(self,assignation):
         self.ToucheRepo.UpdateAssignation(assignation[0],assignation[1],self.joueur.get_nom())
+        self.jeu.update_touche()
         
     
         

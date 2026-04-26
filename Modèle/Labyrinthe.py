@@ -256,7 +256,7 @@ class labyrinthe:
                 for dx in range(-1,2):
                     for dy in range(-1,2):
                         if (elt[0]+dx,elt[1]+dy) in dico_see.keys():
-                            if dico_see[(elt[0]+dx,elt[1]+dy)][0] == 0.5 and dico_see[(elt[0]+dx,elt[1]+dy)][1][0] == dico_see[elt][1][0] and self.can_moove((elt[0]+dx,elt[1]+dy),elt):
+                            if dico_see[(elt[0]+dx,elt[1]+dy)][0] == 0.5  and dico_see[(elt[0]+dx,elt[1]+dy)][1][0] == dico_see[elt][1][0] and self.can_moove((elt[0]+dx,elt[1]+dy),elt):
                                 dico_see[elt] = (1.0,dico_see[elt][1])
         return dico_see
         

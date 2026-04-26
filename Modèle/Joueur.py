@@ -8,6 +8,7 @@ class Joueur:
         self.gauche = "Q"
         self.droite = "D"
         self.accroupi = 16
+        self.touche_slots = {0: "&" ,1 : "é", 2 : '"', 3 : "'"}
         self.est_accroupi = False
         self.pseudo : str = pseudo
         self.inventaire : dict = {}
@@ -38,6 +39,17 @@ class Joueur:
                 return self.droite
             case "accroupi":
                 return self.accroupi
+            case 0:
+                return self.touche_slots[0]
+            case 1:
+                return self.touche_slots[1]
+            case 2:
+                return self.touche_slots[2]
+            case 3:
+                return self.touche_slots[3]
+    def get_slots_dico(self) -> dict:
+        return self.touche_slots
+            
     
     def get_item(self,item) -> int:
         if item in self.inventaire:
@@ -73,6 +85,15 @@ class Joueur:
                 self.droite = new
             case "accroupi":
                 self.accroupi = new
+            case '0':
+                self.touche_slots[0] = new
+            case '1':
+                self.touche_slots[1] = new
+            case '2':
+                self.touche_slots[2] = new
+            case '3':
+                self.touche_slots[3] = new
+            
     
     def set_coord(self,coord : tuple ):
         self.coord = coord
@@ -88,12 +109,20 @@ class Joueur:
                 self.faim = pourcentage
             case "stamina":
                 self.stamina = pourcentage
-    def set_item(self,item,nbr):
+                
+    def set_item(self,item,nbr) :
         if item in self.inventaire:
             self.inventaire[item] += nbr
         else :
-            self.inventaire[item] = nbr      
+            if len(self.inventaire) >=4:
+                item_tombe = self.inventaire.popitem()
+                self.inventaire[item] = nbr
+                return item_tombe
+            else:
+                self.inventaire[item] = nbr   
+                 
     def reset(self):
         self.est_accroupi = False
         self.coord = self.start
-        self.eau,self.faim,self.stamina = 1.0
+        self.inventaire = {}
+        self.eau = self.faim = self.stamina = 1.0

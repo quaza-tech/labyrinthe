@@ -42,7 +42,8 @@ class Jeu(QObject):
         
         self.timer_deplacement_vision.timeout.connect(self.deplacement_monstre_vision)
         self.timer_deplacement.timeout.connect(self.deplacement_monstre_sonore) 
-        
+    def update_touche(self):
+        self.liste_touche : dict = {self.joueur.get_commande("avancer") : (-1,0),self.joueur.get_commande("reculer") : (1,0),self.joueur.get_commande("droite") : (0,1) ,self.joueur.get_commande("gauche") :(0,-1)}
     def condition_victoire(self,timer)-> bool:
         
         if self.joueur.get_coord() == self.vue.labyrinthe.get("end"):
@@ -67,14 +68,20 @@ class Jeu(QObject):
         return False
     def deplacer_joueur(self,touche):
         
+        dico_slot = self.joueur.get_slots_dico()
         touche = QKeySequence(touche).toString()
+        timelaps = 0.7 if self.joueur.is_accroupi() else 0.25
+        
         if self.joueur.get_commande("accroupi") == touche:
             if self.joueur.is_accroupi():
                 self.joueur.set_accroupi(False)
             else:
                 self.joueur.set_accroupi(True)
-                
-        timelaps = 0.7 if self.joueur.is_accroupi() else 0.25
+        
+        elif touche in dico_slot.values():
+            print(touche)
+            keys = [k for k, v in dico_slot.items() if v == touche]        #on cherche la clé associé a la touche pour savoir quelle est le slot selectionné
+            self.vue.UIingame.selection(keys[0])
         
         if touche in self.liste_touche:
             coord_direction = (self.joueur.get_x()+self.liste_touche[touche][0],self.joueur.get_y()+self.liste_touche[touche][1])

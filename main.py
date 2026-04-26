@@ -10,6 +10,6 @@ if __name__ == "__main__":
     # création d'une QApplication
     app = QApplication(sys.argv)
     # creation d'un widget
-    manager = UIinGame({'dynamite' : 5,'water' : 5})
+    manager = SceneManager((20,20))
     # lancement de l'application
     sys.exit(app.exec()) 
