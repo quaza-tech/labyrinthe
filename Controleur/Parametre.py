@@ -97,6 +97,10 @@ class Parametre(QTabWidget):
         self.shift = KeyBinder(self.joueur.get_commande("accroupi"),lambda t: self.joueur.set_commande("accroupi", t)) # On crée le binder avec la touche par défaut
         layout.addWidget(self.shift)
         
+        layout.addWidget(QLabel("Sprint : "))
+        self.Sprint = KeyBinder(self.joueur.get_commande("sprint"),lambda t: self.joueur.set_commande("sprint", t)) # On crée le binder avec la touche par défaut
+        layout.addWidget(self.Sprint)
+        
         layout.addWidget(QLabel("Slot 1  : "))
         self.slots1 = KeyBinder(self.joueur.get_commande(0),lambda t: self.joueur.set_commande('0', t)) # On crée le binder avec la touche par défaut
         layout.addWidget(self.slots1)
@@ -122,6 +126,7 @@ class Parametre(QTabWidget):
         self.key_left.new_touche.connect(lambda t: self.touche_assign.emit(("gauche", t)))
         self.key_right.new_touche.connect(lambda t: self.touche_assign.emit(("droite", t)))
         self.shift.new_touche.connect(lambda t: self.touche_assign.emit(("accroupi", t)))
+        self.Sprint.new_touche.connect(lambda t: self.touche_assign.emit(("sprint", t)))
         self.slots1.new_touche.connect(lambda t: self.touche_assign.emit((0, t)))
         self.slots2.new_touche.connect(lambda t: self.touche_assign.emit((1, t)))
         self.slots3.new_touche.connect(lambda t: self.touche_assign.emit((2, t)))

@@ -8,8 +8,9 @@ class Joueur:
         self.gauche = "Q"
         self.droite = "D"
         self.accroupi = 16
+        self.sprint = None
         self.touche_slots = {0: "&" ,1 : "é", 2 : '"', 3 : "'"}
-        self.est_accroupi = False
+        self.est_accroupi = self.est_sprint = False
         self.pseudo : str = pseudo
         self.inventaire : dict = {}
         self.stamina : float = 1.0
@@ -39,6 +40,8 @@ class Joueur:
                 return self.droite
             case "accroupi":
                 return self.accroupi
+            case "sprint":
+                return self.sprint
             case 0:
                 return self.touche_slots[0]
             case 1:
@@ -70,6 +73,9 @@ class Joueur:
     def is_accroupi(self) -> bool:
         return self.est_accroupi
     
+    def is_sprint(self) -> bool:
+        return self.est_sprint
+    
     def set_nom(self,nom : str):
         self.pseudo = nom
         
@@ -85,6 +91,8 @@ class Joueur:
                 self.droite = new
             case "accroupi":
                 self.accroupi = new
+            case "sprint":
+                self.sprint = new
             case '0':
                 self.touche_slots[0] = new
             case '1':
@@ -101,6 +109,9 @@ class Joueur:
     def set_accroupi(self,etat : bool):
         self.est_accroupi = etat
     
+    def set_sprint(self,etat : bool):
+        self.est_sprint = etat
+        
     def set_barre(self,barre,pourcentage : float):
         match barre:
             case "eau":

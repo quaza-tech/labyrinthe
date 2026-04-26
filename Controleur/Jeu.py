@@ -71,16 +71,31 @@ class Jeu(QObject):
         dico_slot = self.joueur.get_slots_dico()
         touche = QKeySequence(touche).toString()
         
-        timelaps = 0.7 if self.joueur.is_accroupi() and self.vue.UIingame.getValuesBarre("stamina") > 0 else 0.25  
-        if self.vue.UIingame.getValuesBarre("stamina") == 0:
+        if self.joueur.is_accroupi() and self.vue.UIingame.getValuesBarre("stamina") > 0 :
+            timelaps = 1
+        elif self.joueur.is_sprint() and self.vue.UIingame.getValuesBarre("stamina") > 0 : 
+             timelaps = 0.10
+        else :
             self.joueur.set_accroupi(False)
+            self.joueur.set_sprint(False)
+            timelaps = 0.50
+             
         if self.joueur.get_commande("accroupi") == touche:
             if self.joueur.is_accroupi():
                 self.joueur.set_accroupi(False)
             else:
                 if self.vue.UIingame.getValuesBarre("stamina") > 0:
                     self.joueur.set_accroupi(True)
-        
+                    self.joueur.set_sprint(False)
+                    
+        elif self.joueur.get_commande("sprint") == touche:
+            if self.joueur.is_sprint():
+                self.joueur.set_sprint(False)
+            else:
+                if self.vue.UIingame.getValuesBarre("stamina") > 0:
+                    self.joueur.set_sprint(True)
+                    self.joueur.set_accroupi(False)
+                    
         elif touche in dico_slot.values():
             keys = [k for k, v in dico_slot.items() if v == touche]        #on cherche la clé associé a la touche pour savoir quelle est le slot selectionné
             self.vue.UIingame.selection(keys[0])
@@ -93,10 +108,12 @@ class Jeu(QObject):
                     self.vue.cases_visibles = self.vue.labyrinthe.get_cases_visibles(coord_direction,3)
                     self.joueur.set_coord(coord_direction)
                     self.son.play("step","effets")
-                    self.liste_bruit.append((coord_direction,0.5 if timelaps == 0.7 else 1 ,time.time()))
+                    self.liste_bruit.append((coord_direction,0.5 if self.joueur.is_accroupi() else (1.5 if self.joueur.is_sprint() else 1),time.time()))
                     self.vue.UIingame.SetNewValuesBarre({"eau" : -5,"nourriture" : -2})
                     if self.joueur.is_accroupi():
                         self.vue.UIingame.SetNewValuesBarre({"stamina" : -50})
+                    elif self.joueur.is_sprint():
+                        self.vue.UIingame.SetNewValuesBarre({"stamina" : -75})
                     
                         
         if self.condition_victoire(self.vue.temps_restant):
@@ -126,13 +143,13 @@ class Jeu(QObject):
                 
     def deplacement_monstre_sonore(self):
         """Deplacement monstre sonore"""
-        if not self.joueur.is_accroupi() and self.vue.UIingame.getValuesBarre("stamina") == 1000:
+        if not self.joueur.is_accroupi() and self.vue.UIingame.getValuesBarre("stamina") == 1000 or not self.joueur.is_sprint() and self.vue.UIingame.getValuesBarre("stamina") == 1000 :
             self.vue.UIingame.SetStaminaVisibility(False)
         else:
             self.vue.UIingame.SetStaminaVisibility(True)
-            if self.vue.UIingame.getValuesBarre("stamina") != 1000 and not self.joueur.is_accroupi():
-                self.vue.UIingame.SetNewValuesBarre({"stamina" : 100})
-            
+            if self.vue.UIingame.getValuesBarre("stamina") != 1000 and not self.joueur.is_accroupi() and not self.joueur.is_sprint():
+                self.vue.UIingame.SetNewValuesBarre({"stamina" : 50})
+                
         if self.liste_bruit != []:
             bruit = self.bruit_pertinence()
             if bruit:
