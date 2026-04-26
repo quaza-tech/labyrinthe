@@ -16,7 +16,6 @@ class UIinGame(QWidget):
         self.liste_keys : list = []
         for elt in dico:
             self.liste_keys.append(elt)
-        print(self.liste_keys)
         
         self.slots : list = []
 
@@ -42,7 +41,16 @@ class UIinGame(QWidget):
         self.grid.addLayout(self.layoutInventaire,3,0,1,2,Qt.AlignmentFlag.AlignBottom) ; self.grid.addLayout(self.layoutEtatJoueur,3,4,1,1,Qt.AlignmentFlag.AlignBottom)
         
         self.show()
-        
+    def getValuesBarre(self,barre : str) -> int:
+        match barre:
+            case "eau":
+                return self.eau.getValue()
+            case "nourriture":
+                return self.nourriture.getValue()
+            case "stamina":
+                return self.stamina.getValue()
+            case "progression":
+                return self.progLaby.getValue()
     def StaminaIsVisible(self) -> bool:
         return not self.stamina.isHidden()
     

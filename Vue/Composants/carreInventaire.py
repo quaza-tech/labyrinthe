@@ -44,8 +44,10 @@ class Slot(QWidget):
     def updateVue(self):
         pixmap = QPixmap(f"assets/img/labyrinthe/inventaire/items/{self.item[0]}.png")
         self.label.setPixmap(pixmap.scaled(48, 48, Qt.AspectRatioMode.KeepAspectRatio))
+        print(self.item)
         if self.item[1] > 0:
             self.label_nbr.setText(str(self.item[1]))
+            self.label_nbr.show()
         else:
             self.label_nbr.hide()
     def updateNbrItem(self,item,valeurs):
@@ -55,7 +57,8 @@ class Slot(QWidget):
         elif self.item == ("",0):
             self.item = (item,valeurs)
         else :
-            self.item = (self.item[0],self.item[1]+valeurs)
+            ancien = (self.item[0],self.item[1])
+            self.item = (ancien[0],ancien[1]+valeurs)
         self.updateVue()
     
     def selection(self):

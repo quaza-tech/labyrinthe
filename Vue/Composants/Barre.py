@@ -6,7 +6,7 @@ class barre(QWidget):
     def __init__(self,couleur : str,orientation : str):
         super().__init__()
         
-        self.__value = 0
+        self.__value = 1000
 
         
         layout = QVBoxLayout(self)
@@ -19,7 +19,8 @@ class barre(QWidget):
             case "H":
                 self.__progressBar.setOrientation(Qt.Orientation.Horizontal)
                 self.setFixedSize(200,50)
-        self.__progressBar.setValue(100)
+        self.__progressBar.setMaximum(1000)
+        self.__progressBar.setValue(1000)
         self.__progressBar.setTextVisible(False)
 
         layout.addWidget(self.__progressBar)
@@ -36,9 +37,15 @@ class barre(QWidget):
                             }
                             
                             """)
-        self.incValue(20)
-    def incValue(self,value):
-        self.__value = self.__value + value
-        self.__progressBar.setValue(self.__value)
         
+    def incValue(self,value):
+        if self.__value+value > 1000:
+            self.__value = 1000
+        else:
+            self.__value = self.__value + value
+        
+        self.__progressBar.setValue(self.getValue())
+        
+    def getValue(self) -> int:
+        return self.__value
         

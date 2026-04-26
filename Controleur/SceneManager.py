@@ -114,9 +114,7 @@ class SceneManager:
     def setup_touche(self,pseudo):
         reponse = self.ToucheRepo.getToucheBypseudo(pseudo)
         if reponse[0] != False:
-            print("setup en cours")
             for elt in reponse[1]:
-                print(elt)
                 self.joueur.set_commande(elt[0],elt[1])
         
     def verifier_login(self, email, mdp,pseudo):
