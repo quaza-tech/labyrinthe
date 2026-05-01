@@ -23,12 +23,13 @@ class Vue(QWidget):
         self.victoire.hide() ; self.tableau.hide()
         
         
-        """INITIALISATION DES VARIABLE A AFFICH"""
+        """INITIALISATION DES VARIABLE A AFFICHE"""
         self.labyrinthe = labyrinthe
         self.joueur = Joueur
         self.jeu = None
         self.UIingame = UIinGame(self.joueur.inventaire,self)
         self.UIingame.setGeometry(0,0,self.new_width, self.new_height)
+        self.item : dict = {"dynamite" : QPixmap("assets/img/labyrinthe/inventaire/items/dynamite.png"),"water" : QPixmap("assets/img/labyrinthe/inventaire/items/water.png"),"meat" : QPixmap("assets/img/labyrinthe/inventaire/items/meat.png"),"barre_energisante" : QPixmap("assets/img/labyrinthe/inventaire/items/barre_energisante.png")}
         
         """ATTRIBUT POUR LE LABY"""
         self.size_case = (self.new_height-50)//(self.labyrinthe.get("dimension")[0]+1)
@@ -43,6 +44,7 @@ class Vue(QWidget):
         self.heigth_murs = int(self.size_case*1.6)
         self.texture_murs = QPixmap("assets/img/labyrinthe/rempart.png").scaled(self.size_murs,self.size_case,Qt.AspectRatioMode.IgnoreAspectRatio)
         self.texture_sol = QPixmap("assets/img/labyrinthe/sol_sombre.jpg").scaled(self.size_case,self.size_case,Qt.AspectRatioMode.IgnoreAspectRatio)
+    
         self.texture_mur_h = QPixmap("assets/img/labyrinthe/rempartsombre.png").scaled(self.heigth_murs, self.size_murs)  # fin et large → pour Ouest/Est
         murs = QPainter(self.texture_mur_h)
         murs.fillRect(self.texture_mur_h.rect(),QColor(0, 0, 0, 30))
@@ -121,9 +123,7 @@ class Vue(QWidget):
         painter.translate(self.cam_x, self.cam_y)
         """A FINIR LE CAM_Y pour le zoom"""
         '''Dessin des parois du labyrinthe'''
-       
-        for elt in self.labyrinthe.labyrinthe.keys():
-            painter.drawPixmap(QPoint(self.marge_cote + elt[0] * self.size_case, self.marge + elt[1] * self.size_case), self.texture_sol)
+                
         for elt in self.labyrinthe.labyrinthe.keys():
             liste_mur = self.labyrinthe.labyrinthe[elt].murs_cassable()
             y = elt[1]
@@ -142,12 +142,20 @@ class Vue(QWidget):
                     case "Est":
                         painter.drawPixmap(QPoint(self.offset_x + y * self.size_case+self.size_case,self.offset_y + x * self.size_case),self.texture_mur_v)
                         """painter.drawLine(self.marge_cote + x * self.size_case,self.marge + y * self.size_case+self.size_case,self.marge_cote + x * self.size_case+self.size_case,self.marge + y *self.size_case + self.size_case)"""
+        
         for elt in self.labyrinthe.labyrinthe.keys():
             
             if elt not in self.cases_visibles:
-                painter.fillRect(self.marge_cote + elt[1] * self.size_case,self.marge + elt[0] * self.size_case,self.size_case,self.size_case,QColor(0, 0, 0, 255))  # opaque pour non visible)
-        
+                painter.fillRect(self.marge_cote + elt[1] * self.size_case,self.marge + elt[0] * self.size_case,self.size_case,self.size_case,QColor(0, 0, 0, 255))
+            
+            elif float(self.cases_visibles[elt][0]) == 1.0:
+                painter.drawPixmap(QPoint(self.marge_cote + elt[1] * self.size_case, self.marge + elt[0] * self.size_case), self.texture_sol)
+                item = self.labyrinthe.labyrinthe[elt].get_item()
+                if item != None:
+                    painter.drawPixmap(QPoint(self.marge_cote + elt[1] * self.size_case, self.marge + elt[0] * self.size_case),self.item[item[0]].scaled(int(self.size_case//1.5),int(self.size_case//1.5),Qt.AspectRatioMode.IgnoreAspectRatio))
+
             elif float(self.cases_visibles[elt][0]) == 0.5:
+                painter.drawPixmap(QPoint(self.marge_cote + elt[1] * self.size_case, self.marge + elt[0] * self.size_case), self.texture_sol)
                 points = self.dico_direction[tuple(self.cases_visibles[elt][1])]
                 base_x = self.marge_cote + elt[1] * self.size_case
                 base_y = self.marge + elt[0] * self.size_case
@@ -163,6 +171,7 @@ class Vue(QWidget):
                 painter.drawPolygon(polygone)
                 
             elif float(self.cases_visibles[elt][0]) == 0.33:
+                painter.drawPixmap(QPoint(self.marge_cote + elt[1] * self.size_case, self.marge + elt[0] * self.size_case), self.texture_sol)
                 points = self.dico_direction_range[tuple(self.cases_visibles[elt][1])]
                 base_x = self.marge_cote + elt[1] * self.size_case
                 base_y = self.marge + elt[0] * self.size_case

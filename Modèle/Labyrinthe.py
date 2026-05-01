@@ -8,6 +8,8 @@ class labyrinthe:
         self.start = debut
         self.end = fin
         self.dernier_deplacement = time.time()
+        self.item_dispo = [("dynamite",1),("water",2),("meat",1),("barre_energisante",1)]
+        self.item_max : int = 5
     def get(self,want):
         
         match want:
@@ -67,6 +69,12 @@ class labyrinthe:
                             case_adjacent = (elt[0],elt[1]-1)
                             self.labyrinthe[case_adjacent].set_direction("Est")
                             self.labyrinthe[elt].set_direction("Ouest")
+                            
+            add_item : int = random.randint(0,1000)
+            if add_item <= 700 and len(self.item_dispo) != 0:
+                choix_item : int = random.randint(0,len(self.item_dispo)-1)
+                self.labyrinthe[elt].set_item(self.item_dispo[choix_item])
+                self.item_dispo.remove(self.item_dispo[choix_item])
                     
     def create_way(self):
             Pile = [(0,0)]
@@ -240,7 +248,7 @@ class labyrinthe:
                                 case 1:
                                     liste_direction.append("Nord")
                     
-        return (vision,liste_direction)
+        return (vision,liste_direction,self.labyrinthe[observateur].get_item())
     
     def get_cases_visibles(self, observateur: tuple,dist : int) -> dict:
         dico_see : dict = {observateur : (1,[])}

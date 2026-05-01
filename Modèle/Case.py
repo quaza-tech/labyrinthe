@@ -1,5 +1,5 @@
 class Case:
-    def __init__(self,coordonnee : tuple,texture : str):
+    def __init__(self,coordonnee : tuple,texture : str, item = None):
         self.Nord : bool = False
         self.Sud : bool = False
         self.Est : bool = False
@@ -7,6 +7,7 @@ class Case:
         self.coordonnee : tuple = coordonnee
         self.visite : bool = False
         self.texture_sol = texture
+        self.item : tuple = item
     def get_direction(self,direction) ->bool:
         match direction :
             case "Nord":
@@ -24,6 +25,9 @@ class Case:
     def get_texture(self)->str:
         return self.texture_sol
     
+    def get_item(self) -> tuple:
+        return self.item
+    
     def set_direction(self,direction): 
         match direction :
             case "Nord":
@@ -40,7 +44,13 @@ class Case:
         
     def set_texture(self,texture):
         self.texture_sol = texture
-        
+    
+    def set_item(self, item : tuple) :
+        if item == ("",""):
+            self.item = None
+        else:
+            self.item = item
+            
     def direction_dispo(self) ->list:
         liste = ["Nord","Sud","Est","Ouest"]
         dispo = []

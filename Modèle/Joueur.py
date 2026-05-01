@@ -9,13 +9,11 @@ class Joueur:
         self.droite = "D"
         self.accroupi = 16
         self.sprint = None
+        self.prendre = None
         self.touche_slots = {0: "&" ,1 : "é", 2 : '"', 3 : "'"}
         self.est_accroupi = self.est_sprint = False
         self.pseudo : str = pseudo
         self.inventaire : dict = {}
-        self.stamina : float = 1.0
-        self.eau : float = 1.0
-        self.faim : float = 1.0
         
     def get_coord(self)-> tuple:
         return self.coord
@@ -50,6 +48,9 @@ class Joueur:
                 return self.touche_slots[2]
             case 3:
                 return self.touche_slots[3]
+            case "prendre":
+                return self.prendre
+            
     def get_slots_dico(self) -> dict:
         return self.touche_slots
             
@@ -61,14 +62,7 @@ class Joueur:
     
     def get_nom(self) ->str:
         return self.pseudo
-    def get_barre(self,barre) -> float :
-        match barre:
-            case "eau":
-                return self.eau
-            case "faim":
-                return self.faim
-            case "stamina":
-                return self.stamina
+    
             
     def is_accroupi(self) -> bool:
         return self.est_accroupi
@@ -93,6 +87,8 @@ class Joueur:
                 self.accroupi = new
             case "sprint":
                 self.sprint = new
+            case "prendre":
+                self.prendre = new
             case '0':
                 self.touche_slots[0] = new
             case '1':
@@ -101,7 +97,6 @@ class Joueur:
                 self.touche_slots[2] = new
             case '3':
                 self.touche_slots[3] = new
-            
     
     def set_coord(self,coord : tuple ):
         self.coord = coord
@@ -111,15 +106,6 @@ class Joueur:
     
     def set_sprint(self,etat : bool):
         self.est_sprint = etat
-        
-    def set_barre(self,barre,pourcentage : float):
-        match barre:
-            case "eau":
-                self.eau = pourcentage
-            case "faim":
-                self.faim = pourcentage
-            case "stamina":
-                self.stamina = pourcentage
                 
     def set_item(self,item,nbr) :
         if item in self.inventaire:

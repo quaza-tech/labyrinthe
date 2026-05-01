@@ -95,7 +95,3 @@ class UIinGame(QWidget):
         for elt in self.slots:
             elt.deselection()
         self.slots[num_slots].selection()
-        
-    
-    
-  

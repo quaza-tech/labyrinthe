@@ -1,5 +1,4 @@
-from PyQt6.QtMultimedia import QSoundEffect
-from PyQt6.QtCore import Qt,QTimer,pyqtSignal,QObject,QUrl
+from PyQt6.QtCore import QTimer,pyqtSignal,QObject
 from Modèle.Joueur import Joueur
 from Modèle import MonstreSonore
 from Vue.Vue import Vue
@@ -66,6 +65,10 @@ class Jeu(QObject):
             self.defaite.emit()
             self.on_defaite()
         return False
+    def prendre_item(self,item : tuple,case : tuple):
+        self.vue.UIingame.updateItem(item[0],item[1])
+        self.vue.labyrinthe.labyrinthe[case].set_item(("",""))
+        
     def deplacer_joueur(self,touche):
         
         dico_slot = self.joueur.get_slots_dico()
@@ -99,8 +102,13 @@ class Jeu(QObject):
         elif touche in dico_slot.values():
             keys = [k for k, v in dico_slot.items() if v == touche]        #on cherche la clé associé a la touche pour savoir quelle est le slot selectionné
             self.vue.UIingame.selection(keys[0])
-        
-        if touche in self.liste_touche:
+            
+        elif touche == self.joueur.get_commande("prendre"):
+            item = self.vue.labyrinthe.labyrinthe[self.joueur.get_coord()].get_item()
+            if item != None:
+                self.prendre_item(item,self.joueur.get_coord())
+                
+        elif touche in self.liste_touche:
             coord_direction = (self.joueur.get_x()+self.liste_touche[touche][0],self.joueur.get_y()+self.liste_touche[touche][1])
             if self.vue.labyrinthe.can_moove(self.joueur.get_coord(),coord_direction):
                 if (time.time()-self.dernier_deplacement) > timelaps:
