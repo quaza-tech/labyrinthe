@@ -41,6 +41,7 @@ class Slot(QWidget):
             
     def getItem(self) -> tuple:
         return self.item
+    
     def updateVue(self):
         pixmap = QPixmap(f"assets/img/labyrinthe/inventaire/items/{self.item[0]}.png")
         self.label.setPixmap(pixmap.scaled(48, 48, Qt.AspectRatioMode.KeepAspectRatio))
@@ -51,7 +52,7 @@ class Slot(QWidget):
         else:
             self.label_nbr.hide()
     def updateNbrItem(self,item,valeurs):
-        if self.item[1]+valeurs == 0 and self.item != ("",0) :
+        if self.item[1]+valeurs <= 0:
             self.item = ("",0)
             
         elif self.item == ("",0):
@@ -68,5 +69,9 @@ class Slot(QWidget):
     def deselection(self):
         self.label.setObjectName("deselection")
         self.load_styleSheet()
+        
+    def isSelected(self) -> bool:
+        return self.label.objectName() == "selection"
+        
         
         

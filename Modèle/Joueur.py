@@ -10,6 +10,7 @@ class Joueur:
         self.accroupi = 16
         self.sprint = None
         self.prendre = None
+        self.use = None
         self.touche_slots = {0: "&" ,1 : "é", 2 : '"', 3 : "'"}
         self.est_accroupi = self.est_sprint = False
         self.pseudo : str = pseudo
@@ -50,6 +51,8 @@ class Joueur:
                 return self.touche_slots[3]
             case "prendre":
                 return self.prendre
+            case "utiliser":
+                return self.use
             
     def get_slots_dico(self) -> dict:
         return self.touche_slots
@@ -89,6 +92,8 @@ class Joueur:
                 self.sprint = new
             case "prendre":
                 self.prendre = new
+            case "utiliser":
+                self.use = new
             case '0':
                 self.touche_slots[0] = new
             case '1':

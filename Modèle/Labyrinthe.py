@@ -270,6 +270,25 @@ class labyrinthe:
         
     ''' METHODE DE BFS POUR LES MONSTRES '''
     
+    def destruction(self,direction : str,elt : tuple):
+        match direction:
+            case "Nord":
+                case_adjacent = (elt[0]-1,elt[1])
+                self.labyrinthe[case_adjacent].set_direction("Sud")
+                self.labyrinthe[elt].set_direction("Nord")
+            case "Sud":
+                case_adjacent = (elt[0]+1,elt[1])
+                self.labyrinthe[case_adjacent].set_direction("Nord")
+                self.labyrinthe[elt].set_direction("Sud")
+            case "Est":
+                case_adjacent = (elt[0],elt[1]+1)
+                self.labyrinthe[case_adjacent].set_direction("Ouest")
+                self.labyrinthe[elt].set_direction("Est")
+            case "Ouest":
+                case_adjacent = (elt[0],elt[1]-1)
+                self.labyrinthe[case_adjacent].set_direction("Est")
+                self.labyrinthe[elt].set_direction("Ouest")
+                
     def bfs_monstre(self,coord_monstre : tuple,coord_joueur : tuple):
         
         File = deque([coord_monstre]) 

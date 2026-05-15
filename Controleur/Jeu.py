@@ -1,4 +1,4 @@
-from PyQt6.QtCore import QTimer,pyqtSignal,QObject
+from PyQt6.QtCore import QTimer,pyqtSignal,QObject,Qt
 from Modèle.Joueur import Joueur
 from Modèle import MonstreSonore
 from Vue.Vue import Vue
@@ -28,10 +28,10 @@ class Jeu(QObject):
         self.on_defaite = on_defaite
         self.score = score
         self.mode = mode
-        
+        self.last_moove : str = None
         
         """Lien avec le joueur"""
-        self.liste_touche : dict = {self.joueur.get_commande("avancer") : (-1,0),self.joueur.get_commande("reculer") : (1,0),self.joueur.get_commande("droite") : (0,1) ,self.joueur.get_commande("gauche") :(0,-1)}
+        self.liste_touche : dict = {self.joueur.get_commande("avancer") : (-1,0,"Nord"),self.joueur.get_commande("reculer") : (1,0,"Sud"),self.joueur.get_commande("droite") : (0,1,"Est") ,self.joueur.get_commande("gauche") :(0,-1,"Ouest")}
         """SONS DES DIFFERENTS MOBS (PAS, CRI)"""
         
         self.son = Sound
@@ -42,7 +42,7 @@ class Jeu(QObject):
         self.timer_deplacement_vision.timeout.connect(self.deplacement_monstre_vision)
         self.timer_deplacement.timeout.connect(self.deplacement_monstre_sonore) 
     def update_touche(self):
-        self.liste_touche : dict = {self.joueur.get_commande("avancer") : (-1,0),self.joueur.get_commande("reculer") : (1,0),self.joueur.get_commande("droite") : (0,1) ,self.joueur.get_commande("gauche") :(0,-1)}
+        self.liste_touche : dict = {self.joueur.get_commande("avancer") : (-1,0,"Nord"),self.joueur.get_commande("reculer") : (1,0,"Sud"),self.joueur.get_commande("droite") : (0,1,"Est") ,self.joueur.get_commande("gauche") :(0,-1,"Ouest")}
     def condition_victoire(self,timer)-> bool:
         
         if self.joueur.get_coord() == self.vue.labyrinthe.get("end"):
@@ -65,9 +65,31 @@ class Jeu(QObject):
             self.defaite.emit()
             self.on_defaite()
         return False
+    
     def prendre_item(self,item : tuple,case : tuple):
         self.vue.UIingame.updateItem(item[0],item[1])
         self.vue.labyrinthe.labyrinthe[case].set_item(("",""))
+    
+    def utiliser_item(self,touche):
+        touche = "Left" if touche == Qt.MouseButton.LeftButton else "Right"
+        if touche  == self.joueur.get_commande("utiliser"):
+            item = self.vue.UIingame.WhichSelected()
+            match item[0]:
+                case "meat":
+                    self.vue.UIingame.SetNewValuesBarre({"meat" : 300})
+                    self.vue.UIingame.updateItem("meat",-1)
+                case "water":
+                    self.vue.UIingame.SetNewValuesBarre({"water" : 200})
+                    self.vue.UIingame.updateItem("water",-1)
+                case "barre_energisante":
+                    self.vue.UIingame.SetNewValuesBarre({"stamina" : 300, "meat" : 150})
+                    self.vue.UIingame.updateItem("barre_energisante",-1)
+                case "dynamite":
+                    if self.last_moove in self.vue.labyrinthe.murs_cassable(self.coord_j_actuel):
+                        self.vue.UIingame.updateItem("dynamite",-1)
+                        self.vue.labyrinthe.destruction(self.last_moove,self.joueur.get_coord())
+                        self.liste_bruit.append((self.joueur.get_coord(),3,time.time()))
+                        
         
     def deplacer_joueur(self,touche):
         
@@ -102,14 +124,15 @@ class Jeu(QObject):
         elif touche in dico_slot.values():
             keys = [k for k, v in dico_slot.items() if v == touche]        #on cherche la clé associé a la touche pour savoir quelle est le slot selectionné
             self.vue.UIingame.selection(keys[0])
-            
+        
         elif touche == self.joueur.get_commande("prendre"):
             item = self.vue.labyrinthe.labyrinthe[self.joueur.get_coord()].get_item()
             if item != None:
                 self.prendre_item(item,self.joueur.get_coord())
-                
+            
         elif touche in self.liste_touche:
             coord_direction = (self.joueur.get_x()+self.liste_touche[touche][0],self.joueur.get_y()+self.liste_touche[touche][1])
+            self.last_moove = self.liste_touche[touche][2]
             if self.vue.labyrinthe.can_moove(self.joueur.get_coord(),coord_direction):
                 if (time.time()-self.dernier_deplacement) > timelaps:
                     self.dernier_deplacement = time.time()
@@ -117,7 +140,7 @@ class Jeu(QObject):
                     self.joueur.set_coord(coord_direction)
                     self.son.play("step","effets")
                     self.liste_bruit.append((coord_direction,0.5 if self.joueur.is_accroupi() else (1.5 if self.joueur.is_sprint() else 1),time.time()))
-                    self.vue.UIingame.SetNewValuesBarre({"eau" : -5,"nourriture" : -2})
+                    self.vue.UIingame.SetNewValuesBarre({"water" : -5,"meat" : -2})
                     if self.joueur.is_accroupi():
                         self.vue.UIingame.SetNewValuesBarre({"stamina" : -50})
                     elif self.joueur.is_sprint():
@@ -126,6 +149,7 @@ class Jeu(QObject):
                         
         if self.condition_victoire(self.vue.temps_restant):
             return
+        
         self.vue.update()
         
     def timer_moove(self):

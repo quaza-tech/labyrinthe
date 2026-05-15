@@ -132,16 +132,13 @@ class Vue(QWidget):
                 match mur:
                     case "Nord":
                         painter.drawPixmap(QPoint(self.offset_x + y * self.size_case,self.offset_y + x * self.size_case),self.texture_mur_h)
-                        """painter.drawLine(self.marge_cote + x * self.size_case,self.marge + y * self.size_case,self.marge_cote + x * self.size_case,self.marge + y *self.size_case + self.size_case)"""
                     case "Sud":
                         painter.drawPixmap(QPoint(self.offset_x + y * self.size_case,self.offset_y+x * self.size_case+self.size_case),self.texture_mur_h)
-                        """painter.drawLine(self.marge_cote + x * self.size_case+self.size_case,self.marge + y * self.size_case,self.marge_cote + x * self.size_case+self.size_case,self.marge + y *self.size_case+self.size_case)"""
                     case "Ouest":
                         painter.drawPixmap(QPoint(self.offset_x + y * self.size_case,self.offset_y + x * self.size_case),self.texture_mur_v)
-                        """painter.drawLine(self.marge_cote + x * self.size_case,self.marge + y * self.size_case,self.marge_cote + x * self.size_case+self.size_case,self.marge + y *self.size_case)"""
                     case "Est":
                         painter.drawPixmap(QPoint(self.offset_x + y * self.size_case+self.size_case,self.offset_y + x * self.size_case),self.texture_mur_v)
-                        """painter.drawLine(self.marge_cote + x * self.size_case,self.marge + y * self.size_case+self.size_case,self.marge_cote + x * self.size_case+self.size_case,self.marge + y *self.size_case + self.size_case)"""
+                        
         
         for elt in self.labyrinthe.labyrinthe.keys():
             
@@ -186,10 +183,29 @@ class Vue(QWidget):
                 painter.setBrush(QColor(0, 0, 0, 255))
                 painter.setPen(Qt.PenStyle.NoPen)  # pas de contour
                 painter.drawPolygon(polygone)
+        
+        if self.UIingame.WhichSelected()[0] == "dynamite":
+            murs_present = self.labyrinthe.murs_cassable(self.joueur.get_coord())
+            for murs in murs_present:
+                match murs:
+                    case "Nord":
+                         painter.fillRect(self.marge_cote + self.joueur.get_y()*self.size_case,self.marge + self.joueur.get_x()*self.size_case,self.size_case,2
+                                          ,QColor(255, 0, 0) if self.jeu.last_moove == "Nord" else QColor(255, 140, 0))
+                    case "Sud":
+                        painter.fillRect(self.marge_cote + self.joueur.get_y()*self.size_case,self.marge + self.joueur.get_x()*self.size_case+self.size_case,self.size_case,2
+                                          ,QColor(255, 0, 0) if self.jeu.last_moove == "Sud" else QColor(255, 140, 0))
+                    case "Ouest":
+                        painter.fillRect(self.marge_cote + self.joueur.get_y()*self.size_case,self.marge + self.joueur.get_x()*self.size_case,2,self.size_case
+                                          ,QColor(255, 0, 0) if self.jeu.last_moove == "Ouest" else QColor(255, 140, 0))
+                    case "Est":
+                        painter.fillRect(self.marge_cote + self.joueur.get_y()*self.size_case+self.size_case,self.marge + self.joueur.get_x()*self.size_case,2,self.size_case
+                                         ,QColor(255, 0, 0) if self.jeu.last_moove == "Est" else QColor(255, 140, 0))
+                        
+                
                 
         if (x,y) == self.labyrinthe.get("end"):
-            
             painter.fillRect(self.marge_cote + self.labyrinthe.get("end")[0]*self.size_case + self.size_case//4,self.marge + self.labyrinthe.get("end")[1]*self.size_case +self.size_case//4, self.size_case//2, self.size_case//2, QColor(255, 128,0))
+        
         '''Dessin du joueur''' 
         painter.fillRect(self.marge_cote + self.joueur.get_y()*self.size_case + self.size_case//4,self.marge + self.joueur.get_x()*self.size_case +self.size_case//4, self.size_case//2, self.size_case//2, QColor(self.joueur.get_couleur()))
         
@@ -202,6 +218,9 @@ class Vue(QWidget):
         
     def keyPressEvent(self, a0):
         self.jeu.deplacer_joueur(a0.key())
+        
+    def mousePressEvent(self, a0):
+        self.jeu.utiliser_item(a0.buttons())
     
     def reset(self):
         self.temps_restant = 211

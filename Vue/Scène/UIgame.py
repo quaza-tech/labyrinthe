@@ -26,7 +26,7 @@ class UIinGame(QWidget):
                 slot = Slot(("",0))
             self.slots.append(slot)
             self.layoutInventaire.addWidget(slot,Qt.AlignmentFlag.AlignBottom)
-                
+        self.slots[0].selection()     
         self.layoutInventaire.addStretch()
         self.layoutInventaire.setSpacing(2)
         
@@ -74,9 +74,9 @@ class UIinGame(QWidget):
     def SetNewValuesBarre(self,values :dict) :
         for key in values:
             match key:
-                case "eau":
+                case "water":
                     self.eau.incValue(values[key])
-                case "nourriture":
+                case "meat":
                     self.nourriture.incValue(values[key])
                 case "stamina":
                     self.stamina.incValue(values[key])
@@ -88,10 +88,16 @@ class UIinGame(QWidget):
             if self.slots[i].getItem()[0] == item:
                 self.slots[i].updateNbrItem(item,valeurs)
                 return
-            elif self.slots[i].getItem()[0] == "":
+            elif self.slots[i].getItem()[0] == "" and valeurs > 0:
                 self.slots[i].updateNbrItem(item,valeurs)
                 return
     def selection(self,num_slots):
         for elt in self.slots:
             elt.deselection()
         self.slots[num_slots].selection()
+
+    def WhichSelected(self) -> tuple:
+        for elt in self.slots:
+            if elt.isSelected():
+                return elt.getItem()
+        

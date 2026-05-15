@@ -105,6 +105,10 @@ class Parametre(QTabWidget):
         self.pick = KeyBinder(self.joueur.get_commande("prender"),lambda t: self.joueur.set_commande("prendre", t)) # On crée le binder avec la touche par défaut
         layout.addWidget(self.pick)
         
+        layout.addWidget(QLabel("Utiliser l'objet : "))
+        self.use = KeyBinder(self.joueur.get_commande("utiliser"),lambda t: self.joueur.set_commande("utiliser", t)) # On crée le binder avec la touche par défaut
+        layout.addWidget(self.use)
+        
         layout.addWidget(QLabel("Slot 1  : "))
         self.slots1 = KeyBinder(self.joueur.get_commande(0),lambda t: self.joueur.set_commande('0', t)) # On crée le binder avec la touche par défaut
         layout.addWidget(self.slots1)
@@ -132,6 +136,7 @@ class Parametre(QTabWidget):
         self.shift.new_touche.connect(lambda t: self.touche_assign.emit(("accroupi", t)))
         self.Sprint.new_touche.connect(lambda t: self.touche_assign.emit(("sprint", t)))
         self.pick.new_touche.connect(lambda t: self.touche_assign.emit(("prendre", t)))
+        self.use.new_touche.connect(lambda t: self.touche_assign.emit(("utiliser", t)))
         self.slots1.new_touche.connect(lambda t: self.touche_assign.emit((0, t)))
         self.slots2.new_touche.connect(lambda t: self.touche_assign.emit((1, t)))
         self.slots3.new_touche.connect(lambda t: self.touche_assign.emit((2, t)))

@@ -9,6 +9,7 @@ class KeyBinder(QLineEdit):
     
     def __init__(self, current_key, on_change,parent=None):
         super().__init__(parent)
+        self.focus = False
         self.setText(str(current_key))
         self.on_change=on_change
         self.setReadOnly(True) # On ne veut pas qu'il tape au clavier normalement
@@ -49,6 +50,28 @@ class KeyBinder(QLineEdit):
             print(f"Nouvelle touche enregistrée : {key_text}")
             self.emit_touche()
             self.on_change(key_text)
+            self.focus = False
+    def mousePressEvent(self, event):
+        
+        if self.focus == False:
+            self.focus = True
+            return
+        
+        button = event.button()
+        
+        # On transforme le code de la touche en texte (ex: Qt.Key_Z -> "Z")
+        key_text = "Left" if button == Qt.MouseButton.LeftButton else "Right"
+        print(key_text)
+
+        if key_text:
+            self.setText(key_text)
+            self.clearFocus() # Enlève le curseur une fois fini
+            print(f"Nouvelle touche enregistrée : {key_text}")
+            self.emit_touche()
+            self.on_change(key_text)
+            self.focus = False
+            event.accept()
+        
     def emit_touche(self):
         self.new_touche.emit(self.text())
             
