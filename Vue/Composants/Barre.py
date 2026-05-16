@@ -41,6 +41,8 @@ class barre(QWidget):
     def incValue(self,value):
         if self.__value+value > 1000:
             self.__value = 1000
+        elif self.__value+value < 0:
+            self.__value = 0
         else:
             self.__value = self.__value + value
         

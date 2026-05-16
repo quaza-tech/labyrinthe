@@ -12,7 +12,8 @@ class Joueur:
         self.prendre = None
         self.use = None
         self.touche_slots = {0: "&" ,1 : "é", 2 : '"', 3 : "'"}
-        self.est_accroupi = self.est_sprint = False
+        self.est_accroupi = self.est_sprint = self.est_freeze = False
+        
         self.pseudo : str = pseudo
         self.inventaire : dict = {}
         
@@ -41,6 +42,8 @@ class Joueur:
                 return self.accroupi
             case "sprint":
                 return self.sprint
+            case "freeze":
+                return self.est_freeze
             case 0:
                 return self.touche_slots[0]
             case 1:
@@ -111,6 +114,9 @@ class Joueur:
     
     def set_sprint(self,etat : bool):
         self.est_sprint = etat
+    
+    def set_freeze(self,etat : bool):
+        self.est_freeze = etat
                 
     def set_item(self,item,nbr) :
         if item in self.inventaire:
@@ -124,7 +130,7 @@ class Joueur:
                 self.inventaire[item] = nbr   
                  
     def reset(self):
-        self.est_accroupi = False
+        self.est_accroupi = self.est_freeze = self.est_sprint = False
         self.coord = self.start
         self.inventaire = {}
         self.eau = self.faim = self.stamina = 1.0

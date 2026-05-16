@@ -6,6 +6,7 @@ from Modèle import MonstreVision
 from Modèle.BDD.Repositorie.ScoreRepo import ScoreRepo
 import time,random
 from PyQt6.QtGui import QKeySequence
+from Modèle.Dynamite import Dynamite
 
 
 
@@ -29,6 +30,7 @@ class Jeu(QObject):
         self.score = score
         self.mode = mode
         self.last_moove : str = None
+        self.timer = QTimer()
         
         """Lien avec le joueur"""
         self.liste_touche : dict = {self.joueur.get_commande("avancer") : (-1,0,"Nord"),self.joueur.get_commande("reculer") : (1,0,"Sud"),self.joueur.get_commande("droite") : (0,1,"Est") ,self.joueur.get_commande("gauche") :(0,-1,"Ouest")}
@@ -41,6 +43,8 @@ class Jeu(QObject):
         
         self.timer_deplacement_vision.timeout.connect(self.deplacement_monstre_vision)
         self.timer_deplacement.timeout.connect(self.deplacement_monstre_sonore) 
+        self.vue.UIingame.minuteur.temps.connect(self.explosion)
+        
     def update_touche(self):
         self.liste_touche : dict = {self.joueur.get_commande("avancer") : (-1,0,"Nord"),self.joueur.get_commande("reculer") : (1,0,"Sud"),self.joueur.get_commande("droite") : (0,1,"Est") ,self.joueur.get_commande("gauche") :(0,-1,"Ouest")}
     def condition_victoire(self,timer)-> bool:
@@ -54,12 +58,12 @@ class Jeu(QObject):
             return True
         return False
     def condition_defaite(self):
-        if self.joueur.get_coord()[0] == self.monstre_sonore.get_coord()[0] and self.joueur.get_coord()[1] == self.monstre_sonore.get_coord()[1]:
+        if (self.joueur.get_coord()[0] == self.monstre_sonore.get_coord()[0] and self.joueur.get_coord()[1] == self.monstre_sonore.get_coord()[1]) or (self.joueur.get_coord()[0] == self.monstre_vision.get_coord()[0] and self.joueur.get_coord()[1] == self.monstre_vision.get_coord()[1]):
             self.timer_deplacement.stop()
             self.timer_deplacement_vision.stop()
             self.defaite.emit()
             self.on_defaite()
-        elif self.joueur.get_coord()[0] == self.monstre_vision.get_coord()[0] and self.joueur.get_coord()[1] == self.monstre_vision.get_coord()[1]:
+        elif self.vue.UIingame.getValuesBarre("nourriture") == 0 or self.vue.UIingame.getValuesBarre("water") == 0:
             self.timer_deplacement.stop()
             self.timer_deplacement_vision.stop()
             self.defaite.emit()
@@ -85,13 +89,46 @@ class Jeu(QObject):
                     self.vue.UIingame.SetNewValuesBarre({"stamina" : 300, "meat" : 150})
                     self.vue.UIingame.updateItem("barre_energisante",-1)
                 case "dynamite":
+                    print("good")
                     if self.last_moove in self.vue.labyrinthe.murs_cassable(self.coord_j_actuel):
-                        self.vue.UIingame.updateItem("dynamite",-1)
-                        self.vue.labyrinthe.destruction(self.last_moove,self.joueur.get_coord())
-                        self.liste_bruit.append((self.joueur.get_coord(),3,time.time()))
+                        self.joueur.set_freeze(True)
+                        self.vue.UIingame.MinuteurVisibility(True)
+                        print("lancé")
                         
+    def explosion(self,valeur):
         
+        print("start")
+        self.vue.UIingame.MinuteurVisibility(False)
+        self.vue.UIingame.updateItem("dynamite",-1)
+        self.dynamite = Dynamite(self.joueur.get_coord(),self.last_moove,"en cours",valeur)
+        self.joueur.set_freeze(False)
+        self.timer.timeout.connect(self.update_minuteur) 
+        self.timer.start(1000)
+        
+        
+    def update_minuteur(self):
+        if self.dynamite.get("temps")-1 > 0:
+            self.dynamite.set("temps",1)
+            print(self.dynamite.get("temps"))
+        else:
+            self.timer.stop()
+            self.son.play("explosion","effets")
+            print("verification")
+            if self.dynamite.get("coord") not in self.vue.cases_visibles:
+                self.liste_bruit.append((self.dynamite.get("coord"),3,time.time()))
+                print(self.dynamite.get("coord"),self.dynamite.get("direction"))
+                self.vue.labyrinthe.destruction(self.dynamite.get("direction"),self.dynamite.get("coord"))
+                print("explosion")
+            else :
+                self.vue.UIingame.SetNewValuesBarre({"meat" : -1000})
+                print("mort")
+                self.condition_defaite()
+            self.vue.update()
+            
     def deplacer_joueur(self,touche):
+        
+        if self.joueur.get_commande("freeze"):
+            return True
         
         dico_slot = self.joueur.get_slots_dico()
         touche = QKeySequence(touche).toString()

@@ -1,8 +1,9 @@
-from PyQt6.QtWidgets import QWidget,QLabel,QVBoxLayout,QPushButton,QTableWidget,QTableWidgetItem,QHeaderView,QHBoxLayout,QProgressBar,QGridLayout
-from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtWidgets import QWidget,QHBoxLayout,QGridLayout
+from PyQt6.QtWidgets import QGraphicsOpacityEffect
 from PyQt6.QtCore import Qt
 from Vue.Composants.carreInventaire import Slot
 from Vue.Composants.Barre import barre
+from Vue.Composants.Minuteur import Minuteur
 
 class UIinGame(QWidget):
     def __init__(self,dico : dict,parent = None):
@@ -29,18 +30,22 @@ class UIinGame(QWidget):
         self.slots[0].selection()     
         self.layoutInventaire.addStretch()
         self.layoutInventaire.setSpacing(2)
+
+        self.minuteur : Minuteur = Minuteur()
+        self.grid.addWidget(self.minuteur,3,3,1,2,Qt.AlignmentFlag.AlignBottom)
         
         """Layout Etat du joueur"""
         self.stamina,self.eau,self.nourriture = barre("#FFEE00","V"),barre('#54D6FF',"V"),barre("#9C3C00","V")
         self.layoutEtatJoueur.addWidget(self.stamina) ; self.layoutEtatJoueur.addWidget(self.eau) ;  self.layoutEtatJoueur.addWidget(self.nourriture)
         
+        self.stamina_effect = QGraphicsOpacityEffect() ; self.progLaby_effect = QGraphicsOpacityEffect() ; self.minuteur_effect = QGraphicsOpacityEffect()
         """Widget barre de progression du laby"""
         self.progLaby = barre("#00CC11","H")
         
-        self.grid.addWidget(self.progLaby,0,2,1,2)
-        self.grid.addLayout(self.layoutInventaire,3,0,1,2,Qt.AlignmentFlag.AlignBottom) ; self.grid.addLayout(self.layoutEtatJoueur,3,4,1,1,Qt.AlignmentFlag.AlignBottom)
+        self.grid.addWidget(self.progLaby,0,3,1,2)
+        self.grid.addLayout(self.layoutInventaire,3,0,1,2,Qt.AlignmentFlag.AlignBottom) ; self.grid.addLayout(self.layoutEtatJoueur,3,7,1,2,Qt.AlignmentFlag.AlignBottom)
+        self.grid.setColumnStretch(2,1) ; self.grid.setColumnStretch(5,1)
         
-        self.show()
     def getValuesBarre(self,barre : str) -> int:
         match barre:
             case "eau":
@@ -51,6 +56,7 @@ class UIinGame(QWidget):
                 return self.stamina.getValue()
             case "progression":
                 return self.progLaby.getValue()
+            
     def StaminaIsVisible(self) -> bool:
         return not self.stamina.isHidden()
     
@@ -60,17 +66,27 @@ class UIinGame(QWidget):
     def SetStaminaVisibility(self,action : bool):
         match action:
             case False:
-                self.stamina.hide()
+                self.stamina_effect.setOpacity(0)
             case True:
-                self.stamina.show()
+                self.stamina_effect.setOpacity(1)
+        self.stamina.setGraphicsEffect(self.stamina_effect)
     
     def SetProgLabyVisibility(self,action : bool):
         match action:
             case False:
-                self.progLaby.hide()
+                self.prog_effect.setOpacity(0)
             case True:
-                self.progLaby.show()
+                self.prog_effect.setOpacity(1)
+        self.progLaby.setGraphicsEffect(self.stamina_effect)
     
+    def MinuteurVisibility(self,action : bool):
+        match action:
+            case False:
+                self.minuteur_effect.setOpacity(0)
+            case True:
+                self.minuteur_effect.setOpacity(1)
+        self.minuteur.setGraphicsEffect(self.minuteur_effect)
+        
     def SetNewValuesBarre(self,values :dict) :
         for key in values:
             match key:
@@ -91,6 +107,7 @@ class UIinGame(QWidget):
             elif self.slots[i].getItem()[0] == "" and valeurs > 0:
                 self.slots[i].updateNbrItem(item,valeurs)
                 return
+            
     def selection(self,num_slots):
         for elt in self.slots:
             elt.deselection()
@@ -100,4 +117,7 @@ class UIinGame(QWidget):
         for elt in self.slots:
             if elt.isSelected():
                 return elt.getItem()
+            
+    
+        
         

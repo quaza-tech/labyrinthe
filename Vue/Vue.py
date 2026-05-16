@@ -28,6 +28,7 @@ class Vue(QWidget):
         self.joueur = Joueur
         self.jeu = None
         self.UIingame = UIinGame(self.joueur.inventaire,self)
+        self.UIingame.MinuteurVisibility(False)
         self.UIingame.setGeometry(0,0,self.new_width, self.new_height)
         self.item : dict = {"dynamite" : QPixmap("assets/img/labyrinthe/inventaire/items/dynamite.png"),"water" : QPixmap("assets/img/labyrinthe/inventaire/items/water.png"),"meat" : QPixmap("assets/img/labyrinthe/inventaire/items/meat.png"),"barre_energisante" : QPixmap("assets/img/labyrinthe/inventaire/items/barre_energisante.png")}
         
@@ -112,6 +113,7 @@ class Vue(QWidget):
         if self.temps_restant <= 0:
             self.timer.stop()
             self.jeu.condition_victoire(self.temps_restant)
+            
     def paintEvent(self,event):
         painter = QPainter(self)
         """Zoom sur le joueur"""
