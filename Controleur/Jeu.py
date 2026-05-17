@@ -32,6 +32,9 @@ class Jeu(QObject):
         self.last_moove : str = None
         self.timer = QTimer()
         
+        """Distance avec la sortie"""
+        
+        
         """Lien avec le joueur"""
         self.liste_touche : dict = {self.joueur.get_commande("avancer") : (-1,0,"Nord"),self.joueur.get_commande("reculer") : (1,0,"Sud"),self.joueur.get_commande("droite") : (0,1,"Est") ,self.joueur.get_commande("gauche") :(0,-1,"Ouest")}
         """SONS DES DIFFERENTS MOBS (PAS, CRI)"""
@@ -128,7 +131,7 @@ class Jeu(QObject):
                 self.vue.update()
             
     def deplacer_joueur(self,touche):
-        
+
         if self.joueur.get_commande("freeze"):
             return True
         
@@ -175,6 +178,11 @@ class Jeu(QObject):
             if self.vue.labyrinthe.can_moove(self.joueur.get_coord(),coord_direction):
                 if (time.time()-self.dernier_deplacement) > timelaps:
                     self.dernier_deplacement = time.time()
+                    
+                    self.distance_actuel = self.vue.labyrinthe.bfs_monstre(self.joueur.get_coord(),self.vue.labyrinthe.get("end"))
+                    self.sortie = int((1 - len(self.distance_actuel) / len(self.distance_initial)) * 1000)
+                    
+                    self.vue.UIingame.SetNewValuesBarre({"progression": self.sortie})
                     self.vue.cases_visibles = self.vue.labyrinthe.get_cases_visibles(coord_direction,3)
                     self.joueur.set_coord(coord_direction)
                     self.son.play("step","effets")
@@ -189,9 +197,11 @@ class Jeu(QObject):
         if self.condition_victoire(self.vue.temps_restant):
             return
         
+        
         self.vue.update()
         
     def timer_moove(self):
+        self.distance_initial = self.vue.labyrinthe.bfs_monstre((0,0),self.vue.labyrinthe.get("end"))
         self.timer_deplacement.start(1000)
         self.timer_deplacement_vision.start(1000)
         
@@ -312,5 +322,6 @@ class Jeu(QObject):
         self.timer_deplacement.stop()
         self.timer_deplacement_vision.stop()
         self.joueur.reset()
+        self.distance_actuel = self.vue.labyrinthe.bfs_monstre(self.joueur.get_coord(),self.vue.labyrinthe.get("end"))
         self.monstre_sonore.reset()
         self.monstre_vision.reset()

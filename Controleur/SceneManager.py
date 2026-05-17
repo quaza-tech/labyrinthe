@@ -151,7 +151,11 @@ class SceneManager:
         if assignation[0] != "aide_visuelle":
             self.soundManager.set_volume_to(assignation)
         else:
-            self.vue.UIingame.SetProgLabyVisibility(assignation[1])
+            match assignation[1]:
+                case 0:
+                    self.vue.UIingame.SetProgLabyVisibility(False)
+                case 1:
+                    self.vue.UIingame.SetProgLabyVisibility(True)
         
     
         

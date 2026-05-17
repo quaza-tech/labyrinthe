@@ -36,12 +36,12 @@ class UIinGame(QWidget):
         self.grid.addWidget(self.minuteur,3,3,1,2,Qt.AlignmentFlag.AlignBottom)
         
         """Layout Etat du joueur"""
-        self.stamina,self.eau,self.nourriture = barre("#FFEE00","V"),barre('#54D6FF',"V"),barre("#9C3C00","V")
+        self.stamina,self.eau,self.nourriture = barre("#FFEE00","V",1000),barre('#54D6FF',"V",1000),barre("#9C3C00","V",1000)
         self.layoutEtatJoueur.addWidget(self.stamina) ; self.layoutEtatJoueur.addWidget(self.eau) ;  self.layoutEtatJoueur.addWidget(self.nourriture)
         
         self.stamina_effect = QGraphicsOpacityEffect() ; self.progLaby_effect = QGraphicsOpacityEffect() ; self.minuteur_effect = QGraphicsOpacityEffect()
         """Widget barre de progression du laby"""
-        self.progLaby = barre("#00CC11","H")
+        self.progLaby = barre("#00CC11","H",0)
         
         self.grid.addWidget(self.progLaby,0,3,1,2)
         self.grid.addLayout(self.layoutInventaire,3,0,1,2,Qt.AlignmentFlag.AlignBottom) ; self.grid.addLayout(self.layoutEtatJoueur,3,7,1,2,Qt.AlignmentFlag.AlignBottom)
@@ -78,7 +78,7 @@ class UIinGame(QWidget):
                 self.progLaby_effect.setOpacity(0)
             case True:
                 self.progLaby_effect.setOpacity(1)
-        self.progLaby.setGraphicsEffect(self.stamina_effect)
+        self.progLaby.setGraphicsEffect(self.progLaby_effect)
     
     def MinuteurVisibility(self,action : bool):
         match action:
@@ -98,7 +98,7 @@ class UIinGame(QWidget):
                 case "stamina":
                     self.stamina.incValue(values[key])
                 case "progression":
-                    self.progLaby.incValue(values[key])
+                    self.progLaby.setValue(values[key])
                 case "reset":
                     self.progLaby.incValue(0)
                     self.stamina.incValue(values[key])

@@ -3,10 +3,10 @@ from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtCore import Qt
 
 class barre(QWidget):
-    def __init__(self,couleur : str,orientation : str):
+    def __init__(self,couleur : str,orientation : str, valeur : int):
         super().__init__()
         
-        self.__value = 1000
+        self.__value = valeur
 
         
         layout = QVBoxLayout(self)
@@ -47,7 +47,9 @@ class barre(QWidget):
             self.__value = self.__value + value
         
         self.__progressBar.setValue(self.getValue())
-        
+    def setValue(self,value : int):
+        self.__value = value
+        self.__progressBar.setValue(self.getValue())
     def getValue(self) -> int:
         return self.__value
         
