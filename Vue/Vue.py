@@ -4,6 +4,7 @@ from PyQt6.QtGui import QGuiApplication,QPainter, QColor,QPixmap,QTransform,QPol
 from Vue.Scène.Victoire import Victoire
 from Vue.Scène.TabScore import TabScore
 from Vue.Scène.UIgame import UIinGame
+import random
 
 
 
@@ -58,6 +59,9 @@ class Vue(QWidget):
         
         self.cam_x = -(self.marge_cote + self.joueur.get_y()*self.size_case + self.size_case//4)
         self.cam_y  = -(self.marge + self.joueur.get_x()*self.size_case + self.size_case//4)
+        self.shake_offset_y = self.cam_y
+        self.shake_offset_x = self.cam_x
+        
         self.cases_visibles = self.labyrinthe.get_cases_visibles((0,0),3)
         
         """FOV EN TRIANGLE"""
@@ -70,10 +74,12 @@ class Vue(QWidget):
         
         """ TIMER """
         self.temps = 211
+        self.temps_shaking = 0
         self.temps_restant = 211
         self.timer_label = QLabel(f"Temps restant : {self.temps_restant}s")
         self.timer_label.move(self.new_width//2, self.new_height//10)
         self.timer = QTimer(self)
+        self.timer_shake = QTimer()
         
         self.timer_fps = QTimer(self)
         self.timer_fps.timeout.connect(self.update_fps)
@@ -113,16 +119,36 @@ class Vue(QWidget):
         if self.temps_restant <= 0:
             self.timer.stop()
             self.jeu.condition_victoire(self.temps_restant)
-            
+    def start_timer_shake(self):
+        
+        self.timer_shake.timeout.connect(self.start_shake)
+        self.timer_shake.start(25)
+        
+    def start_shake(self):
+        
+        self.temps_shaking += 1
+        self.shake_offset_x = self.cam_x + random.randint(-5, 5)
+        self.shake_offset_y = self.cam_y + random.randint(-5, 5)
+        
+        if self.temps_shaking >= 80 :
+            self.timer_shake.stop()
+            self.temps_shaking = 0
+        
+    
     def paintEvent(self,event):
         painter = QPainter(self)
         """Zoom sur le joueur"""
         
         self.cam_x = self.cam_x + (-(self.marge_cote + self.joueur.get_y()*self.size_case + self.size_case//4)-self.cam_x)*0.4
         self.cam_y = self.cam_y +  (-(self.marge + self.joueur.get_x()*self.size_case + self.size_case//4)-self.cam_y)*0.4
+        
+        if not self.timer_shake.isActive():
+            self.shake_offset_y = self.cam_y
+            self.shake_offset_x = self.cam_x
+        
         painter.translate(self.new_width//2, self.new_height//2)
-        painter.scale(2,2) 
-        painter.translate(self.cam_x, self.cam_y)
+        painter.scale(4,4) 
+        painter.translate(self.shake_offset_x, self.shake_offset_y)
         """A FINIR LE CAM_Y pour le zoom"""
         '''Dessin des parois du labyrinthe'''
                 

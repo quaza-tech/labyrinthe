@@ -55,6 +55,7 @@ class Jeu(QObject):
             if self.mode != "lore":
                 self.score.CreateScore(self.joueur.get_nom(),self.vue.temps-self.vue.temps_restant,self.vue.labyrinthe.get("dimension")[0],self.vue.temps_restant*10-(self.vue.temps-self.vue.temps_restant*10%10)) 
             self.victoire.emit()
+            self.joueur.set_freeze(True)
             return True
         return False
     def condition_defaite(self):
@@ -89,18 +90,16 @@ class Jeu(QObject):
                     self.vue.UIingame.SetNewValuesBarre({"stamina" : 300, "meat" : 150})
                     self.vue.UIingame.updateItem("barre_energisante",-1)
                 case "dynamite":
-                    print("good")
                     if self.last_moove in self.vue.labyrinthe.murs_cassable(self.coord_j_actuel):
                         self.joueur.set_freeze(True)
                         self.vue.UIingame.MinuteurVisibility(True)
-                        print("lancé")
                         
     def explosion(self,valeur):
         
-        print("start")
         self.vue.UIingame.MinuteurVisibility(False)
         self.vue.UIingame.updateItem("dynamite",-1)
         self.dynamite = Dynamite(self.joueur.get_coord(),self.last_moove,"en cours",valeur)
+        print(self.dynamite.get("coord"))
         self.joueur.set_freeze(False)
         self.timer.timeout.connect(self.update_minuteur) 
         self.timer.start(1000)
@@ -109,19 +108,20 @@ class Jeu(QObject):
     def update_minuteur(self):
         if self.dynamite.get("temps")-1 > 0:
             self.dynamite.set("temps",1)
-            print(self.dynamite.get("temps"))
         else:
             self.timer.stop()
-            self.son.play("explosion","effets")
-            print("verification")
+            chemin  : list = self.vue.labyrinthe.bfs_monstre(self.dynamite.get("coord"),self.joueur.get_coord())
+            print(len(chemin))
+            if len(chemin) >= 8:
+                self.son.play("explosion_lointaine","effets")
+            else:
+                self.son.play("explosion","effets")
             if self.dynamite.get("coord") not in self.vue.cases_visibles:
-                self.liste_bruit.append((self.dynamite.get("coord"),3,time.time()))
-                print(self.dynamite.get("coord"),self.dynamite.get("direction"))
+                self.liste_bruit.append((self.dynamite.get("coord"),3.3,time.time()))
+                self.vue.start_timer_shake()
                 self.vue.labyrinthe.destruction(self.dynamite.get("direction"),self.dynamite.get("coord"))
-                print("explosion")
             else :
                 self.vue.UIingame.SetNewValuesBarre({"meat" : -1000})
-                print("mort")
                 self.condition_defaite()
             self.vue.update()
             

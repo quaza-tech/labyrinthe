@@ -83,6 +83,7 @@ class SceneManager:
         self.parametres.touche_assign.connect(self.sauvegarder_touche)
 
     def start_game(self,mode : str):
+        self.joueur.set_freeze(False)
         match mode:
             case "lore":
                 self.stack.setCurrentIndex(2)

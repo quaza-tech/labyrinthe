@@ -12,7 +12,7 @@ class SoundManager:
     def _load_sounds(self):
         
         
-        self.sounds["effets"] = [("step",son("pas_beton",0.2)),("explosion",son("explosion",0.5)),("explosion_lointaine",son("explosion_lointaine",0.2))]
+        self.sounds["effets"] = [("step",son("pas_beton",0.2)),("explosion",son("explosion",0.6)),("explosion_lointaine",son("explosion_lointaine",0.7))]
     
     def play(self, name,categorie):
         for i in range (0,len(self.sounds[categorie])):
