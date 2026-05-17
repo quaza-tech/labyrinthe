@@ -106,24 +106,26 @@ class Jeu(QObject):
         
         
     def update_minuteur(self):
-        if self.dynamite.get("temps")-1 > 0:
-            self.dynamite.set("temps",1)
-        else:
-            self.timer.stop()
-            chemin  : list = self.vue.labyrinthe.bfs_monstre(self.dynamite.get("coord"),self.joueur.get_coord())
-            print(len(chemin))
-            if len(chemin) >= 8:
-                self.son.play("explosion_lointaine","effets")
+        if hasattr(self,"dynamite"):
+            if self.dynamite.get("temps")-1 > 0:
+                self.dynamite.set("temps",1)
             else:
-                self.son.play("explosion","effets")
-            if self.dynamite.get("coord") not in self.vue.cases_visibles:
-                self.liste_bruit.append((self.dynamite.get("coord"),3.3,time.time()))
-                self.vue.start_timer_shake()
-                self.vue.labyrinthe.destruction(self.dynamite.get("direction"),self.dynamite.get("coord"))
-            else :
-                self.vue.UIingame.SetNewValuesBarre({"meat" : -1000})
-                self.condition_defaite()
-            self.vue.update()
+                self.timer.stop()
+                chemin  : list = self.vue.labyrinthe.bfs_monstre(self.dynamite.get("coord"),self.joueur.get_coord())
+                print(len(chemin))
+                if len(chemin) >= 8:
+                    self.son.play("explosion_lointaine","effets")
+                else:
+                    self.son.play("explosion","effets")
+                if self.dynamite.get("coord") not in self.vue.cases_visibles:
+                    self.liste_bruit.append((self.dynamite.get("coord"),3.3,time.time()))
+                    self.vue.start_timer_shake()
+                    self.vue.labyrinthe.destruction(self.dynamite.get("direction"),self.dynamite.get("coord"))
+                else :
+                    self.vue.UIingame.SetNewValuesBarre({"meat" : -1000})
+                    self.condition_defaite()
+                del(self.dynamite)
+                self.vue.update()
             
     def deplacer_joueur(self,touche):
         
@@ -305,3 +307,10 @@ class Jeu(QObject):
         else : 
             self.monstre_vision.set_coord(self.monstre_vision.get_coord())
             self.condition_defaite()
+            
+    def reset(self):
+        self.timer_deplacement.stop()
+        self.timer_deplacement_vision.stop()
+        self.joueur.reset()
+        self.monstre_sonore.reset()
+        self.monstre_vision.reset()

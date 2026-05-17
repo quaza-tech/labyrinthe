@@ -3,10 +3,10 @@ import random,time
 from collections import deque
 class labyrinthe:
     def __init__(self,dimension : tuple,debut : tuple, fin : tuple):
-        self.labyrinthe = {}
+        self.labyrinthe : dict = {}
         self.dimension = dimension
-        self.start = debut
-        self.end = fin
+        self.start :tuple = debut
+        self.end :tuple = fin
         self.dernier_deplacement = time.time()
         self.item_dispo = [("dynamite",1),("water",2),("meat",1),("barre_energisante",1)]
         self.item_max : int = 5
@@ -323,4 +323,7 @@ class labyrinthe:
             chemin.append((coord_actuel[0]+directions[choix][0],coord_actuel[1]+directions[choix][1]))
             coord_actuel : tuple = (coord_actuel[0]+directions[choix][0],coord_actuel[1]+directions[choix][1])
         return chemin
-        
+    
+    def reset_laby(self):
+        self.labyrinthe : dict = {}
+        self.item_dispo = [("dynamite",1),("water",2),("meat",1),("barre_energisante",1)]

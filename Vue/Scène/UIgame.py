@@ -13,6 +13,7 @@ class UIinGame(QWidget):
         self.grid = QGridLayout() ; self.layoutInventaire = QHBoxLayout() ; self.layoutEtatJoueur = QHBoxLayout()
         self.setLayout(self.grid)
         
+        
         """Layout Inventaire"""
         self.liste_keys : list = []
         for elt in dico:
@@ -74,9 +75,9 @@ class UIinGame(QWidget):
     def SetProgLabyVisibility(self,action : bool):
         match action:
             case False:
-                self.prog_effect.setOpacity(0)
+                self.progLaby_effect.setOpacity(0)
             case True:
-                self.prog_effect.setOpacity(1)
+                self.progLaby_effect.setOpacity(1)
         self.progLaby.setGraphicsEffect(self.stamina_effect)
     
     def MinuteurVisibility(self,action : bool):
@@ -98,6 +99,11 @@ class UIinGame(QWidget):
                     self.stamina.incValue(values[key])
                 case "progression":
                     self.progLaby.incValue(values[key])
+                case "reset":
+                    self.progLaby.incValue(0)
+                    self.stamina.incValue(values[key])
+                    self.nourriture.incValue(values[key])
+                    self.eau.incValue(values[key])
                     
     def updateItem(self,item,valeurs):
         for i in range(len(self.slots)):
@@ -117,6 +123,11 @@ class UIinGame(QWidget):
         for elt in self.slots:
             if elt.isSelected():
                 return elt.getItem()
+    def reset(self):
+        self.SetNewValuesBarre({"reset" : 1000})
+        for i in range(len(self.slots)):
+              self.slots[i].reset()
+            
             
     
         

@@ -24,7 +24,7 @@ class SceneManager:
         end = (dimension[0]-1,dimension[1]-1)
         self.labyrinthe = labyrinthe(dimension,start,end)
         self.labyrinthe.set_labyrinthe(4)
-        self.labyrinthe.create_way()
+        
 
         """INSTANCIATION DES DIFFERENTS MOB"""
         self.joueur = Joueur((0,0),"#FFFFFF","")
@@ -33,7 +33,7 @@ class SceneManager:
         
         """INSTANCIATION DES LOGIQUES DE VUE BDD ET JEU"""
         self.login = login()
-        self.joueurRepo,self.ScoreRepo = JoueurRepo(),ScoreRepo() ; self.ToucheRepo = ToucheRepo()
+        self.joueurRepo,self.ScoreRepo = JoueurRepo(),ScoreRepo() ; self.ToucheRepo,self.AudioRepo = ToucheRepo(),audioRepo()
         self.soundManager = SoundManager()
         self.vue = Vue(self.labyrinthe,self.joueur)
         self.jeu = Jeu(self.vue,self.joueur,self.monstre_vision,self.monstre_sonore,self.retour_menu,self.ScoreRepo,None,self.soundManager)
@@ -55,11 +55,11 @@ class SceneManager:
         self.login.envoie_donnee.connect(self.verifier_login)
         
         """Signaux en lien avec le son """
-        self.parametres.son_generale.connect(self.soundManager.set_volume)
-        self.parametres.son_generale.connect(self.soundManager.set_volume)
-        self.parametres.son_generale.connect(self.soundManager.set_volume)
-        self.parametres.son_generale.connect(self.soundManager.set_volume)
-        self.parametres.son_generale.connect(self.soundManager.set_volume)
+        self.parametres.son_generale.connect(self.sauvegarder_audio)
+        self.parametres.son_musique.connect(self.sauvegarder_audio)
+        self.parametres.son_effet.connect(self.sauvegarder_audio)
+        self.parametres.son_ui.connect(self.sauvegarder_audio)
+        self.parametres.aide_vis.connect(self.sauvegarder_audio)
         
         
         self.stack.addWidget(self.login)
@@ -84,6 +84,7 @@ class SceneManager:
 
     def start_game(self,mode : str):
         self.joueur.set_freeze(False)
+        self.labyrinthe.create_way()
         match mode:
             case "lore":
                 self.stack.setCurrentIndex(2)
@@ -103,20 +104,22 @@ class SceneManager:
         self.stack.close()
     def retour_menu(self):
         self.stack.setCurrentIndex(1)
-        self.vue.timer.stop()
-        self.vue.timer_fps.stop()
-        self.jeu.timer_deplacement.stop()
-        self.jeu.timer_deplacement_vision.stop()
-        self.jeu.monstre_vision.reset()
-        self.jeu.monstre_sonore.reset()
-        self.jeu.joueur.reset()
+        self.jeu.reset()
         self.vue.reset()
+        self.labyrinthe.reset_laby()
+        self.labyrinthe.set_labyrinthe(4)
+        
     
     def setup_touche(self,pseudo):
         reponse = self.ToucheRepo.getToucheBypseudo(pseudo)
         if reponse[0] != False:
             for elt in reponse[1]:
                 self.joueur.set_commande(elt[0],elt[1])
+    
+    def setup_audio(self,pseudo):
+        reponse = self.AudioRepo.getSonBypseudo(pseudo)
+        if reponse[0] != False:
+            self.parametres.setup_audio_bdd(reponse[1])
         
     def verifier_login(self, email, mdp,pseudo):
         
@@ -131,6 +134,7 @@ class SceneManager:
             self.menu.setPseudo(reponse[1][0][1])
             self.joueur.set_nom(reponse[1][0][1])
             self.setup_touche(reponse[1][0][1])
+            self.setup_audio(reponse[1][0][1])
             self.jeu.update_touche()
             self.parametres.setup_commande_tab()
             
@@ -141,6 +145,13 @@ class SceneManager:
     def sauvegarder_touche(self,assignation):
         self.ToucheRepo.UpdateAssignation(assignation[0],assignation[1],self.joueur.get_nom())
         self.jeu.update_touche()
+    
+    def sauvegarder_audio(self,assignation):
+        self.AudioRepo.UpdateVolume(assignation[0],assignation[1],self.joueur.get_nom())
+        if assignation[0] != "aide_visuelle":
+            self.soundManager.set_volume_to(assignation)
+        else:
+            self.vue.UIingame.SetProgLabyVisibility(assignation[1])
         
     
         

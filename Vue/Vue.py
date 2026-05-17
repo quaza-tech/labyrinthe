@@ -130,7 +130,7 @@ class Vue(QWidget):
         self.shake_offset_x = self.cam_x + random.randint(-5, 5)
         self.shake_offset_y = self.cam_y + random.randint(-5, 5)
         
-        if self.temps_shaking >= 80 :
+        if self.temps_shaking >= 70 :
             self.timer_shake.stop()
             self.temps_shaking = 0
         
@@ -254,7 +254,11 @@ class Vue(QWidget):
         self.temps_restant = 211
         self.timer_label.setText(f"Survivez : {self.temps_restant}s")
         self.setFocus()
+        self.timer.stop()
+        self.timer_fps.stop()
         self.tableau.hide()
         self.victoire.hide()
+        self.UIingame.reset()
+        self.cases_visibles = []
 
                 

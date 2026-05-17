@@ -8,14 +8,14 @@ class audioRepo(Audio):
         
         self.db = DB("Echo_du_silence.db")
         
-    def getVolumeBypseudo(self,pseudo) -> tuple:
+    def getSonBypseudo(self,pseudo) -> tuple:
         self.db.cur.execute("SELECT libelle,volume from audio WHERE pseudo = ?",(pseudo,))
         data = self.db.cur.fetchall()
         if data :
             return(True,data)
         return (False,"ERR 404 : not found")
     
-    def getVolumeSpeByIdJoueur(self,libelle,pseudo) -> tuple:
+    def getSonSpeByIdJoueur(self,libelle,pseudo) -> tuple:
         self.db.cur.execute("SELECT libelle,volume from audio WHERE pseudo = ? and libelle = ?",(pseudo,libelle))
         data = self.db.cur.fetchall()
         if data :
@@ -43,4 +43,4 @@ class audioRepo(Audio):
             self.db.con.commit()
             return (True,None)
         else : 
-            self.CreateAssignation(libelle,volume,pseudo)
+            self.CreateSon(libelle,volume,pseudo)

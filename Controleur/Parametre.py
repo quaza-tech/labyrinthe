@@ -6,11 +6,11 @@ from PyQt6.QtCore import pyqtSignal
 class Parametre(QTabWidget):
     
     touche_assign = pyqtSignal(tuple)
-    son_generale = pyqtSignal(int)
+    son_generale = pyqtSignal(tuple)
     son_effet = pyqtSignal(tuple)
     son_musique = pyqtSignal(tuple)
     son_ui = pyqtSignal(tuple)
-    aide_vis = pyqtSignal()
+    aide_vis = pyqtSignal(tuple)
     
     
     def __init__(self,joueur):
@@ -68,12 +68,26 @@ class Parametre(QTabWidget):
         self.tab_audio.setLayout(layout)
         
         """SIGNAUX"""
-        self.gene_vol.valueChanged.connect(self.son_generale.emit)
+        self.gene_vol.valueChanged.connect(lambda t: self.son_generale.emit(("general",t)))
         self.mus_vol.valueChanged.connect(lambda t: self.son_musique.emit(("musique", t)))
         self.eff_vol.valueChanged.connect(lambda t: self.son_effet.emit(("effet",t)))
         self.ui_vol.valueChanged.connect(lambda t: self.son_ui.emit(("ui",t)))
-        self.aide_visu.checkStateChanged.connect(self.aide_vis.emit)
+        self.aide_visu.checkStateChanged.connect(lambda t :self.aide_vis.emit(("aide_visuelle",self.aide_visu.isChecked())))
         
+    def setup_audio_bdd(self,data):
+        for each in data:
+            match each[0]:
+                case "musique":
+                    self.mus_vol.setValue(each[1])
+                case "effet":
+                    self.eff_vol.setValue(each[1])
+                case "ui":
+                    self.ui_vol.setValue(each[1])
+                case "general":
+                    self.gene_vol.setValue(each[1])
+                case "aide_visuelle":
+                    self.aide_visu.setChecked(each[1])
+                    
     def setup_commande_tab(self):
         layout = QVBoxLayout()
         

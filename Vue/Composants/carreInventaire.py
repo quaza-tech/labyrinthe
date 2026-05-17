@@ -72,6 +72,9 @@ class Slot(QWidget):
         
     def isSelected(self) -> bool:
         return self.label.objectName() == "selection"
-        
+    
+    def reset(self):
+        self.item = ("",0)
+        self.updateVue()
         
         
