@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QLabel,QWidget,QVBoxLayout,QSlider,QCheckBox,QTabWidget
+from PyQt6.QtWidgets import QLabel,QWidget,QVBoxLayout,QSlider,QCheckBox,QTabWidget,QScrollArea
 from PyQt6.QtCore import Qt
 from Controleur.CurrentKey import KeyBinder
 from PyQt6.QtCore import pyqtSignal
@@ -32,10 +32,11 @@ class Parametre(QTabWidget):
         
         
         self.setup_audio_tab()
-        
+        self.setup_visuel()
         self.apply_medieval_style()
         
     def setup_audio_tab(self):
+        
         layout = QVBoxLayout()
         
         layout.addWidget(QLabel("Volume générale (Pas, Cris) :"))
@@ -62,8 +63,7 @@ class Parametre(QTabWidget):
         self.ui_vol.setValue(100)
         layout.addWidget(self.ui_vol)
         
-        self.aide_visu = QCheckBox("Aide visuelle")
-        layout.addWidget(self.aide_visu)
+        
         layout.addStretch() # Pousse tout vers le haut
         self.tab_audio.setLayout(layout)
         
@@ -72,6 +72,16 @@ class Parametre(QTabWidget):
         self.mus_vol.valueChanged.connect(lambda t: self.son_musique.emit(("musique", t)))
         self.eff_vol.valueChanged.connect(lambda t: self.son_effet.emit(("effet",t)))
         self.ui_vol.valueChanged.connect(lambda t: self.son_ui.emit(("ui",t)))
+        
+    
+    def setup_visuel(self):
+        
+        layout = QVBoxLayout()
+        
+        self.aide_visu = QCheckBox("Aide visuelle")
+        layout.addWidget(self.aide_visu)  
+        self.tab_visuel.setLayout(layout) 
+        
         self.aide_visu.checkStateChanged.connect(lambda t :self.aide_vis.emit(("aide_visuelle",self.aide_visu.isChecked())))
         
     def setup_audio_bdd(self,data):
@@ -87,8 +97,12 @@ class Parametre(QTabWidget):
                     self.gene_vol.setValue(each[1])
                 case "aide_visuelle":
                     self.aide_visu.setChecked(each[1])
-                    
+                  
     def setup_commande_tab(self):
+        
+        layoutConteneur : QVBoxLayout = QVBoxLayout()
+        Scroll_bar : QScrollArea = QScrollArea()
+        widget_conteneur : QWidget = QWidget()
         layout = QVBoxLayout()
         
         layout.addWidget(QLabel("Avancé : "))
@@ -139,7 +153,11 @@ class Parametre(QTabWidget):
         self.slots4 = KeyBinder(self.joueur.get_commande(3),lambda t: self.joueur.set_commande('3', t)) # On crée le binder avec la touche par défaut
         layout.addWidget(self.slots4)
         
-        self.tab_commandes.setLayout(layout)
+        
+        widget_conteneur.setLayout(layout)
+        Scroll_bar.setWidget(widget_conteneur)
+        layoutConteneur.addWidget(Scroll_bar)
+        self.tab_commandes.setLayout(layoutConteneur)
         
         """SIGNAUX"""
         

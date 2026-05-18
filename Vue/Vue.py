@@ -1,15 +1,19 @@
 from PyQt6.QtWidgets import QWidget,QLabel
-from PyQt6.QtCore import Qt,QTimer,QPoint
-from PyQt6.QtGui import QGuiApplication,QPainter, QColor,QPixmap,QTransform,QPolygon
+from PyQt6.QtCore import Qt,QTimer,QPoint,pyqtSignal
+from PyQt6.QtGui import QGuiApplication,QPainter, QColor,QPixmap,QTransform,QPolygon,QKeySequence
 from Vue.Scène.Victoire import Victoire
 from Vue.Scène.TabScore import TabScore
 from Vue.Scène.UIgame import UIinGame
+from Vue.Scène.Pause import Pause
 import random
 
 
 
 
 class Vue(QWidget):
+    
+    fondMenuPause : pyqtSignal = pyqtSignal(QPixmap)
+    
     def __init__(self,labyrinthe,Joueur):
         super().__init__()
         
@@ -88,7 +92,10 @@ class Vue(QWidget):
     def setup_signaux(self):
         self.jeu.victoire.connect(self.show_victoire)
         self.victoire.continuer.connect(self.show_tab)
-        
+    
+    def show_pause(self):
+        self.fondMenuPause.emit(self.grab())
+             
     def show_victoire(self):
         if not self.jeu.mode == "lore":
             self.victoire.setGeometry(self.new_width//5,self.new_height//4,int(self.new_width//1.5), self.new_height//2)
@@ -245,10 +252,15 @@ class Vue(QWidget):
         painter.end()
         
     def keyPressEvent(self, a0):
-        self.jeu.deplacer_joueur(a0.key())
+        touche = QKeySequence(a0.key()).toString()
+        if touche == "Esc":
+            self.show_pause()
+        else:  
+            self.jeu.deplacer_joueur(touche)
         
     def mousePressEvent(self, a0):
         self.jeu.utiliser_item(a0.buttons())
+
     
     def reset(self):
         self.temps_restant = 211

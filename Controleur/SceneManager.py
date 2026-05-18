@@ -9,6 +9,7 @@ from Modèle.MonstreSonore import MonstreSonore
 from Modèle.MonstreVision import MonstreVision
 from Vue.Scène.Menu import Menu
 from Vue.Scène.Login import login
+from Vue.Scène.Pause import Pause
 from Modèle.BDD.Repositorie.JoueurRepo import JoueurRepo
 from Modèle.BDD.Repositorie.ScoreRepo import ScoreRepo
 from Modèle.BDD.Repositorie.ToucheRepo import ToucheRepo
@@ -35,6 +36,7 @@ class SceneManager:
         self.login = login()
         self.joueurRepo,self.ScoreRepo = JoueurRepo(),ScoreRepo() ; self.ToucheRepo,self.AudioRepo = ToucheRepo(),audioRepo()
         self.soundManager = SoundManager()
+        self.Pause = Pause()
         self.vue = Vue(self.labyrinthe,self.joueur)
         self.jeu = Jeu(self.vue,self.joueur,self.monstre_vision,self.monstre_sonore,self.retour_menu,self.ScoreRepo,None,self.soundManager)
         self.vue.jeu = self.jeu
@@ -50,7 +52,7 @@ class SceneManager:
         """Gestion des cliques"""
         self.menu.button_continue.clicked.connect(lambda: self.start_game("speedrun"))
         self.menu.button_start.clicked.connect(lambda: self.start_game("lore"))
-        self.menu.button_Parameter.clicked.connect(self.parametre)
+        self.menu.button_Parameter.clicked.connect(lambda :self.parametre("menu"))
         self.menu.button_leave.clicked.connect(self.leave)
         self.login.envoie_donnee.connect(self.verifier_login)
         
@@ -65,6 +67,7 @@ class SceneManager:
         self.stack.addWidget(self.login)
         self.stack.addWidget(self.menu)
         self.stack.addWidget(self.vue)
+        
         Widgetparent = QWidget()
         layoutparent = QVBoxLayout()
         self.button_retour = QPushButton("RETOUR")
@@ -73,14 +76,19 @@ class SceneManager:
         layoutparent.addWidget(self.parametres)
         Widgetparent.setLayout(layoutparent)
         self.stack.addWidget(Widgetparent)
+        self.stack.addWidget(self.Pause)
         new_width = QGuiApplication.primaryScreen().size().width()-100
         new_height =  QGuiApplication.primaryScreen().size().height()-100
         self.stack.resize(new_width, new_height)
         self.stack.show()
         
-        self.button_retour.clicked.connect(self.retour)
+        self.button_retour.clicked.connect(lambda : self.retour(self.contexte))
         self.vue.tableau.retourMenu.connect(self.retour_menu)
         self.parametres.touche_assign.connect(self.sauvegarder_touche)
+        self.Pause.retourMenu.connect(self.retour_menu)
+        self.Pause.parametres.connect(self.parametre)
+        self.vue.fondMenuPause.connect(self.Menu_pause)
+        self.Pause.retour_jeu.connect(self.retour_jeu)
 
     def start_game(self,mode : str):
         self.joueur.set_freeze(False)
@@ -96,12 +104,37 @@ class SceneManager:
                 self.vue.start_timer()
                 self.vue.timer_fps.start(16)
                 self.jeu.timer_moove()
-    def parametre(self):
+    def parametre(self,contexte):
+        self.contexte = contexte
         self.stack.setCurrentIndex(3)
-    def retour(self):
-        self.stack.setCurrentIndex(1)
+        
+    def retour(self,scene):
+        match scene:
+            case "menu":
+                self.stack.setCurrentIndex(1)
+            case "jeu":
+                self.stack.setCurrentIndex(4)
+                
+                
+    def Menu_pause(self,fond ):
+        self.joueur.set_freeze(True)
+        self.jeu.timer_pause()
+        self.Pause.changement_fond(fond)
+        self.stack.setCurrentIndex(4)
+        if self.jeu.mode != "lore":
+            self.vue.timer.stop()
+    
+    def retour_jeu(self):
+        self.jeu.update_touche()
+        self.joueur.set_freeze(False)
+        self.jeu.timer_moove()
+        self.stack.setCurrentIndex(2)
+        if self.jeu.mode != "lore":
+            self.vue.start_timer()
+        
     def leave(self):
         self.stack.close()
+        
     def retour_menu(self):
         self.stack.setCurrentIndex(1)
         self.jeu.reset()

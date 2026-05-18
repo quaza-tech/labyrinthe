@@ -45,7 +45,6 @@ class Slot(QWidget):
     def updateVue(self):
         pixmap = QPixmap(f"assets/img/labyrinthe/inventaire/items/{self.item[0]}.png")
         self.label.setPixmap(pixmap.scaled(48, 48, Qt.AspectRatioMode.KeepAspectRatio))
-        print(self.item)
         if self.item[1] > 0:
             self.label_nbr.setText(str(self.item[1]))
             self.label_nbr.show()

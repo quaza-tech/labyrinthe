@@ -50,6 +50,7 @@ class Jeu(QObject):
         
     def update_touche(self):
         self.liste_touche : dict = {self.joueur.get_commande("avancer") : (-1,0,"Nord"),self.joueur.get_commande("reculer") : (1,0,"Sud"),self.joueur.get_commande("droite") : (0,1,"Est") ,self.joueur.get_commande("gauche") :(0,-1,"Ouest")}
+    
     def condition_victoire(self,timer)-> bool:
         
         if self.joueur.get_coord() == self.vue.labyrinthe.get("end"):
@@ -136,7 +137,6 @@ class Jeu(QObject):
             return True
         
         dico_slot = self.joueur.get_slots_dico()
-        touche = QKeySequence(touche).toString()
         
         if self.joueur.is_accroupi() and self.vue.UIingame.getValuesBarre("stamina") > 0 :
             timelaps = 1
@@ -171,7 +171,8 @@ class Jeu(QObject):
             item = self.vue.labyrinthe.labyrinthe[self.joueur.get_coord()].get_item()
             if item != None:
                 self.prendre_item(item,self.joueur.get_coord())
-            
+                
+                
         elif touche in self.liste_touche:
             coord_direction = (self.joueur.get_x()+self.liste_touche[touche][0],self.joueur.get_y()+self.liste_touche[touche][1])
             self.last_moove = self.liste_touche[touche][2]
@@ -204,6 +205,10 @@ class Jeu(QObject):
         self.distance_initial = self.vue.labyrinthe.bfs_monstre((0,0),self.vue.labyrinthe.get("end"))
         self.timer_deplacement.start(1000)
         self.timer_deplacement_vision.start(1000)
+    
+    def timer_pause(self):
+        self.timer_deplacement.stop()
+        self.timer_deplacement_vision.stop()
         
     def bruit_pertinence(self):
         for elt in self.liste_bruit:
